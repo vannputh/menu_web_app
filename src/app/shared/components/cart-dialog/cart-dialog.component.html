@@ -1,0 +1,103 @@
+<div class="cart-dialog">
+  <h2 mat-dialog-title>Add to Cart</h2>
+  
+  <div mat-dialog-content class="dialog-content">
+    <div class="item-info">
+      <img [src]="data.menuItem.imageSrc" [alt]="data.menuItem.title" class="item-image">
+      <div class="item-details">
+        <h3>{{ data.menuItem.title }}</h3>
+        <p class="price">${{ data.menuItem.price }}</p>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <mat-form-field appearance="outline" class="quantity-field">
+        <mat-label>Quantity</mat-label>
+        <input matInput type="number" [(ngModel)]="quantity" min="1" max="10">
+      </mat-form-field>
+
+      <!-- Drink-specific options -->
+      <div *ngIf="isDrink()" class="drink-options">
+        <mat-form-field appearance="outline">
+          <mat-label>Sugar Level</mat-label>
+          <mat-select [(ngModel)]="sugarLevel">
+            <mat-option value="0%">0%</mat-option>
+            <mat-option value="25%">25%</mat-option>
+            <mat-option value="50%">50%</mat-option>
+            <mat-option value="75%">75%</mat-option>
+            <mat-option value="100%">100%</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ice Level</mat-label>
+          <mat-select [(ngModel)]="iceLevel">
+            <mat-option value="No Ice">No Ice</mat-option>
+            <mat-option value="25%">25%</mat-option>
+            <mat-option value="50%">50%</mat-option>
+            <mat-option value="75%">75%</mat-option>
+            <mat-option value="100%">100%</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Topping</mat-label>
+          <mat-select [(ngModel)]="topping">
+            <mat-option value="None">None</mat-option>
+            <mat-option value="Pearls">Pearls</mat-option>
+            <mat-option value="Jelly">Jelly</mat-option>
+            <mat-option value="Pudding">Pudding</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Bottled drink options -->
+      <div *ngIf="isBottled()" class="bottled-options">
+        <mat-form-field appearance="outline">
+          <mat-label>Iced</mat-label>
+          <mat-select [(ngModel)]="iced">
+            <mat-option value="yes">Yes</mat-option>
+            <mat-option value="no">No</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Main dish options -->
+      <div *ngIf="isMain()" class="main-options">
+        <mat-form-field appearance="outline">
+          <mat-label>Spice Level</mat-label>
+          <mat-select [(ngModel)]="spiceLevel">
+            <mat-option value="mild">Mild</mat-option>
+            <mat-option value="medium">Medium</mat-option>
+            <mat-option value="spicy">Spicy</mat-option>
+            <mat-option value="extra-spicy">Extra Spicy</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Soup options -->
+      <div *ngIf="isSoup()" class="soup-options">
+        <mat-form-field appearance="outline">
+          <mat-label>Soup Type</mat-label>
+          <mat-select [(ngModel)]="soupType">
+            <mat-option value="sichuan_spicy">Sichuan Spicy</mat-option>
+            <mat-option value="clear_broth">Clear Broth</mat-option>
+            <mat-option value="tomato">Tomato</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="special-instructions">
+        <mat-label>Special Instructions</mat-label>
+        <textarea matInput [(ngModel)]="specialInstructions" placeholder="Any special requests..."></textarea>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onConfirm()">
+      Add to Cart - ${{ (data.menuItem.price * quantity).toFixed(2) }}
+    </button>
+  </div>
+</div> 

@@ -12,10 +12,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Could not connect to MongoDB:', err));
+// MongoDB Atlas Connection
+mongoose.connect(process.env.MONGO_URI, {
+    // These options work well with MongoDB Atlas
+    serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+})
+    .then(() => console.log('Connected to MongoDB Atlas'))
+    .catch(err => console.error('Could not connect to MongoDB Atlas:', err));
 
 // Schemas
 const counterSchema = new mongoose.Schema({
@@ -228,6 +232,57 @@ app.post('/send-order-email', upload.single('pdf'), async (req, res) => {
     res.status(500).json({
       message: 'Failed to send order email',
       error: error.message
+    });
+  }
+});
+
+// Debug endpoint to check environment setup (remove in production)
+app.get('/admin/debug', (req, res) => {
+  res.json({
+    mongoUriSet: !!process.env.MONGO_URI,
+    emailUserSet: !!process.env.EMAIL_USER,
+    emailPasswordSet: !!process.env.EMAIL_APP_PASSWORD,
+    adminPasswordSet: !!process.env.ADMIN_PASSWORD,
+    adminPasswordLength: process.env.ADMIN_PASSWORD?.length || 0,
+    nodeEnv: process.env.NODE_ENV,
+    port: process.env.PORT
+  });
+});
+
+// Admin authentication endpoint
+app.post('/admin/login', async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    console.log('Admin login attempt:');
+    console.log('- Received password length:', password?.length || 0);
+    console.log('- Expected password length:', process.env.ADMIN_PASSWORD?.length || 0);
+    console.log('- Environment ADMIN_PASSWORD is set:', !!process.env.ADMIN_PASSWORD);
+
+    if (!password) {
+      console.log('- Error: No password provided');
+      return res.status(400).json({ message: 'Password is required' });
+    }
+
+    // Check against environment variable
+    if (password === process.env.ADMIN_PASSWORD) {
+      console.log('- Success: Password match');
+      res.status(200).json({ 
+        success: true, 
+        message: 'Authentication successful' 
+      });
+    } else {
+      console.log('- Error: Password mismatch');
+      res.status(401).json({ 
+        success: false, 
+        message: 'Invalid password' 
+      });
+    }
+  } catch (error) {
+    console.error('Admin login error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error' 
     });
   }
 });

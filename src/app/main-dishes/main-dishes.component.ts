@@ -1,43 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MenuItemComponent } from "../menu-item/menu-item.component";
-import { MainDishesService } from './main-dishes.service';
-import { MainDish } from './main-dishes.interface';
+import { Component } from '@angular/core';
+import { MenuCategoryComponent } from '../shared/components/menu-category/menu-category.component';
 
 @Component({
   selector: 'app-main-dishes',
   standalone: true,
-  imports: [
-    CommonModule,
-    MenuItemComponent
-  ],
-  styleUrl: './main-dishes.component.scss',
-  template: `
-    <div class="menu-items">
-      <app-menu-item
-        *ngFor="let dish of mainDishes"
-        [imageSrc]="dish.imageSrc"
-        [title]="dish.title"
-        [price]="dish.price"
-        [itemType]="dish.category === 'Soup' ? 'soup' : 'main'">
-      </app-menu-item>
-    </div>
-  `
+  imports: [MenuCategoryComponent],
+  template: `<app-menu-category category="main-dishes"></app-menu-category>`
 })
-export class MainDishesComponent implements OnInit {
-  mainDishes: MainDish[] = [];
-
-  constructor(private mainDishesService: MainDishesService) {}
-
-  ngOnInit() {
-    this.mainDishesService.getMainDishes()
-        .subscribe({
-          next: (dishes) => {
-            this.mainDishes = dishes;
-          },
-          error: (error) => {
-            console.error('Error fetching main dishes:', error);
-          }
-        });
-  }
-}
+export class MainDishesComponent {}

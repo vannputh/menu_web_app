@@ -1,89 +1,107 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OrderService } from '../services/order.service';
-import { Order } from '../services/order.interface';
+import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+import { OrderService } from '../../shared/services/order.service';
+import { AuthService } from '../../shared/services/auth.service';
+import { Order } from '../../shared/interfaces/order.interface';
 
 @Component({
     selector: 'app-admin-dashboard',
     standalone: true,
     imports: [CommonModule],
-    template: `
-    <div class="p-6 dark:bg-gray-800 min-h-screen mt-24">
-        <h1 class="text-3xl font-bold mb-6 dark:text-white">Orders Dashboard</h1>
-
-        <div class="grid grid-cols-1 gap-4">
-            <div *ngFor="let order of orders"
-                 class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 transition-all hover:shadow-lg">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h2 class="text-xl font-semibold dark:text-white">Customer "{{order.customerName}}"</h2>
-                        <p class="text-gray-500 dark:text-gray-400">{{order.createdAt | date:'medium'}}</p>
-                        <p class="text-gray-500 dark:text-gray-400">Payment: {{order.paymentMethod}}</p>
-                    </div>
-                    <div class="flex items-center">
-                        <span [class]="getStatusClass(order.status)">
-                            {{order.status}}
-                        </span>
-                        <button
-                                *ngIf="order.status === 'pending'"
-                                (click)="markAsCompleted(order)"
-                                class="ml-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
-                            Mark Complete
-                        </button>
-                    </div>
-                </div>
-                    <div class="border-t dark:border-gray-600 pt-4">
-            <h3 class="font-semibold mb-2 dark:text-white">Order Items:</h3>
-            <div *ngFor="let orderItem of order.items" class="flex flex-col mb-2">
-                <div class="flex justify-between items-center">
-                    <span class="dark:text-gray-300">{{orderItem.quantity}}x {{orderItem.title}}</span>
-                    <span class="dark:text-gray-300">\${{orderItem.price * orderItem.quantity}}</span>
-                </div>
-                <div class="text-sm dark:text-gray-400">
-                    <span *ngIf="orderItem.spiceLevel">Spice Level: {{orderItem.spiceLevel}}</span>
-                    <span *ngIf="orderItem.iceLevel"> | Ice Level: {{orderItem.iceLevel}}</span>
-                    <span *ngIf="orderItem.sugar"> | Sugar: {{orderItem.sugar}}</span>
-                    <span *ngIf="orderItem.toppings"> | Toppings: {{orderItem.toppings}}</span>
-                    <span *ngIf="orderItem.soupType"> | Soup Type: {{orderItem.soupType}}</span>
-                    <span *ngIf="orderItem.specialInstructions"> | Special Instructions: {{orderItem.specialInstructions}}</span>
-                </div>
-            </div>
-    <div class="border-t dark:border-gray-600 mt-2 pt-2 flex justify-between font-semibold">
-        <span class="dark:text-white">Total:</span>
-        <span class="dark:text-white">\${{order.total}}</span>
-    </div>
-</div>
-            </div>
-        </div>
-    </div>
-    `,
+    templateUrl: './admin-dashboard.component.html',
     styleUrls: ['./admin-dashboard.component.scss']
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit, OnDestroy {
     orders: Order[] = [];
+    loading = true;
+    error = '';
+    private destroy$ = new Subject<void>();
 
-    constructor(private orderService: OrderService) {}
+    constructor(
+        private orderService: OrderService,
+        private authService: AuthService,
+        private router: Router
+    ) {}
 
-    ngOnInit() {
-    this.orderService.getOrders()
-        .subscribe({
-            next: (orders) => {
-                this.orders = orders;
-            },
-            error: (error) => {
-                console.error('Error fetching orders:', error);
-                alert('Failed to fetch orders. Please check the console for more details.');
-            }
-        });
+    ngOnInit(): void {
+        this.loadOrders();
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    loadOrders(): void {
+        this.loading = true;
+        this.error = '';
+
+        this.orderService.getOrders()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (orders) => {
+                    this.orders = orders.sort((a, b) => 
+                        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                    );
+                    this.loading = false;
+                },
+                error: (error) => {
+                    console.error('Error fetching orders:', error);
+                    this.error = error.message || 'Failed to load orders';
+                    this.loading = false;
+                }
+            });
+    }
+
+    markAsCompleted(order: Order): void {
+        if (!order.id) return;
+
+        this.orderService.updateOrderStatus(order.id, 'completed')
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (updatedOrder) => {
+                    const index = this.orders.findIndex(o => o.id === order.id);
+                    if (index !== -1) {
+                        this.orders[index] = updatedOrder;
+                    }
+                },
+                error: (error) => {
+                    console.error('Error updating order status:', error);
+                    this.error = 'Failed to update order status';
+                }
+            });
     }
 
     getStatusClass(status: string): string {
+        const baseClasses = 'px-3 py-1 rounded-full text-sm font-medium';
         return status === 'completed'
-            ? 'px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-            : 'px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+            ? `${baseClasses} bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200`
+            : `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200`;
     }
 
-    markAsCompleted(order: Order) {
-    order.status = 'completed';
-}
+    getPendingOrdersCount(): number {
+        return this.orders.filter(order => order.status === 'pending').length;
+    }
+
+    getTotalRevenue(): number {
+        return this.orders
+            .filter(order => order.status === 'completed')
+            .reduce((total, order) => total + order.total, 0);
+    }
+
+    logout(): void {
+        this.authService.logout();
+    }
+
+    retryLoadOrders(): void {
+        this.loadOrders();
+    }
+
+    hasItemOptions(item: any): boolean {
+        return !!(item.spiceLevel || item.iceLevel || item.sugarLevel || 
+                 (item.topping && item.topping !== 'None') || 
+                 item.soupType || item.specialInstructions);
+    }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from './cart.service';
-import { CartItem } from './cart-item.interface';
+import { CartItem } from '../shared/interfaces/cart-item.interface';
 import { MatDialog, MatDialogConfig, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { jsPDF } from 'jspdf';
 import { FormsModule } from '@angular/forms';

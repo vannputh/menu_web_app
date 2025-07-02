@@ -1,0 +1,133 @@
+.menu-item-card {
+  width: 100%;
+  max-width: 260px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-image {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+
+    .item-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &:hover .item-image {
+    transform: scale(1.05);
+  }
+
+  // Disabled state for placeholder items
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    &:hover {
+      transform: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .item-image {
+      filter: grayscale(0.5);
+    }
+
+    .add-to-cart-btn {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .card-content {
+    padding: 1.4rem;
+    text-align: center;
+
+    .item-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0 0 0.5rem 0;
+      line-height: 1.4;
+    }
+
+    .item-price {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #dc2626;
+      margin: 0 0 1rem 0;
+    }
+
+    .add-to-cart-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.4rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+
+      &:hover {
+        background: #b91c1c;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// Dark mode styles
+:host-context(.dark) {
+  .menu-item-card {
+    background: #374151;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-content {
+      .item-title {
+        color: #f9fafb;
+      }
+
+      .item-price {
+        color: #f87171;
+      }
+
+      .add-to-cart-btn {
+        background: #dc2626;
+
+        &:hover {
+          background: #b91c1c;
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .menu-item-card {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+}

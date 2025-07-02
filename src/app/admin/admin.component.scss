@@ -1,0 +1,236 @@
+.admin-login {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+
+  .login-container {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .login-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .login-header {
+    background: #dc2626;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+
+    h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 0.875rem;
+    }
+  }
+
+  .login-form {
+    padding: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      background: #f9fafb;
+
+      &:focus {
+        outline: none;
+        border-color: #dc2626;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+      }
+
+      &:disabled {
+        background: #f3f4f6;
+        color: #9ca3af;
+        cursor: not-allowed;
+      }
+
+      &.error {
+        border-color: #ef4444;
+        background: #fef2f2;
+      }
+
+      &::placeholder {
+        color: #9ca3af;
+      }
+    }
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #ef4444;
+
+    .error-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+  }
+
+  .login-button {
+    width: 100%;
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+
+    &:hover:not(:disabled) {
+      background: #b91c1c;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    &.loading {
+      background: #b91c1c;
+    }
+
+    .loading-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      .loading-spinner {
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+}
+
+// Dark mode support
+:host-context(.dark) {
+  .admin-login {
+    .login-card {
+      background: #374151;
+    }
+
+    .login-header {
+      background: #1f2937;
+    }
+
+    .form-group {
+      label {
+        color: #f9fafb;
+      }
+
+      .form-input {
+        background: #4b5563;
+        border-color: #6b7280;
+        color: #f9fafb;
+
+        &:focus {
+          background: #374151;
+          border-color: #dc2626;
+        }
+
+        &::placeholder {
+          color: #9ca3af;
+        }
+      }
+    }
+
+    .error-message {
+      background: #7f1d1d;
+      color: #fca5a5;
+      border-left-color: #ef4444;
+    }
+  }
+}
+
+// Animations
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .admin-login {
+    padding: 0.5rem;
+
+    .login-header {
+      padding: 1.5rem;
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+
+    .login-form {
+      padding: 1.5rem;
+    }
+  }
+} 

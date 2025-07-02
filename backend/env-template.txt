@@ -1,0 +1,38 @@
+# MongoDB Atlas Configuration Template
+# Copy this file to .env and replace the placeholder values with your actual credentials
+
+# MongoDB Atlas Connection String
+# To get this:
+# 1. Go to MongoDB Atlas (https://cloud.mongodb.com/)
+# 2. Create a cluster if you haven't already
+# 3. Click "Connect" on your cluster
+# 4. Choose "Connect your application"
+# 5. Copy the connection string and replace <password> with your database user password
+MONGO_URI=mongodb+srv://your-username:your-password@your-cluster.xxxxx.mongodb.net/menu-web-app?retryWrites=true&w=majority
+
+# Email Configuration for Order Confirmations (Gmail)
+# Your Gmail email address
+EMAIL_USER=your-email@gmail.com
+
+# Gmail App Password (NOT your regular Gmail password)
+# To generate this:
+# 1. Go to your Google Account settings
+# 2. Security > 2-Step Verification (must be enabled first)
+# 3. App passwords > Generate new app password
+# 4. Use the 16-character password generated
+EMAIL_APP_PASSWORD=your-16-character-app-password
+
+# Server Configuration
+PORT=3000
+
+# Admin Dashboard
+ADMIN_PASSWORD=your-secure-admin-password
+
+# Environment
+NODE_ENV=development
+
+# Instructions:
+# 1. Copy this file to .env in the same directory (backend/.env)
+# 2. Replace all the placeholder values with your actual credentials
+# 3. Set ADMIN_PASSWORD to a secure password for accessing the admin dashboard
+# 4. Make sure to add .env to your .gitignore file to keep credentials secure 

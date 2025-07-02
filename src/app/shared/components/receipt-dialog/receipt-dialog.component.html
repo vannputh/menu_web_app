@@ -1,0 +1,92 @@
+<div class="receipt-dialog">
+  <div class="dialog-header">
+    <h2>KaiXin(开心)</h2>
+    <p>Official Receipt</p>
+  </div>
+
+  <div class="dialog-content">
+    <div class="order-items">
+      <div *ngFor="let item of data.items" class="receipt-item">
+        <div class="item-info">
+          <h4 class="item-name">{{ item.title }}</h4>
+          <p class="item-quantity">{{ item.quantity }} x ${{ item.price }}</p>
+          
+          <div class="item-options" *ngIf="hasOptions(item)">
+            <span *ngIf="item.sugarLevel" class="option">Sugar: {{ item.sugarLevel }}</span>
+            <span *ngIf="item.iceLevel" class="option">Ice: {{ item.iceLevel }}</span>
+            <span *ngIf="item.spiceLevel" class="option">Spice: {{ item.spiceLevel }}</span>
+            <span *ngIf="item.soupType" class="option">Soup: {{ getSoupTypeName(item.soupType) }}</span>
+            <span *ngIf="item.iced" class="option">Iced: {{ item.iced }}</span>
+            <span *ngIf="item.topping && item.topping !== 'None'" class="option">Topping: {{ item.topping }}</span>
+            <span *ngIf="item.specialInstructions" class="option special">{{ item.specialInstructions }}</span>
+          </div>
+        </div>
+        
+        <div class="item-total">
+          ${{ (item.quantity * item.price).toFixed(2) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="order-total">
+      <span class="total-label">Total</span>
+      <span class="total-amount">${{ data.total.toFixed(2) }}</span>
+    </div>
+
+    <div class="customer-details">
+      <div class="form-group">
+        <label for="customerName">Name</label>
+        <input
+          id="customerName"
+          type="text"
+          [(ngModel)]="customerName"
+          placeholder="Enter your name"
+          class="name-input"
+          [class.error]="errorMessage"
+        />
+      </div>
+      
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <div class="payment-method">
+      <h4>Payment Method</h4>
+      <div class="payment-options">
+        <button 
+          type="button"
+          class="payment-option"
+          [class.active]="paymentMethod === 'cash'"
+          (click)="setPaymentMethod('cash')">
+          <svg class="payment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span>Cash</span>
+        </button>
+        
+        <button 
+          type="button"
+          class="payment-option"
+          [class.active]="paymentMethod === 'khqr'"
+          (click)="setPaymentMethod('khqr')">
+          <svg class="payment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+          </svg>
+          <span>KHQR</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-actions">
+    <button type="button" class="btn btn-secondary" (click)="onClose()">
+      Close
+    </button>
+    <button type="button" class="btn btn-primary" (click)="onCheckout()">
+      Checkout
+    </button>
+  </div>
+</div> 
