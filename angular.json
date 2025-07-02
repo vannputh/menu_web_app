@@ -47,14 +47,23 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "4kB",
+                  "maximumError": "20kB"
                 }
+              ],
+              "allowedCommonJsDependencies": [
+                "qrcode-generator",
+                "html2canvas",
+                "jspdf",
+                "dompurify",
+                "canvg",
+                "raf",
+                "rgbcolor"
               ],
               "outputHashing": "all"
             },
@@ -70,7 +79,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "menu:build:production",
+              "buildTarget": "menu:build:production"
             },
             "development": {
               "buildTarget": "menu:build:development"

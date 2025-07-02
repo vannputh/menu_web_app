@@ -1,359 +1,320 @@
-<div class="admin-dashboard">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8">
+  <p-toast></p-toast>
+  
   <!-- Header -->
-  <header class="dashboard-header">
-    <div class="header-content">
-      <div class="header-left">
-        <h1>Admin Dashboard</h1>
-        <p>Manage your restaurant</p>
+  <p-card class="mb-6">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-1">Admin Dashboard</h1>
+        <p class="text-gray-600 dark:text-gray-400">Manage your restaurant</p>
       </div>
-      
-      <button (click)="logout()" class="logout-btn">
-        <svg class="logout-icon" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
-        </svg>
-        Logout
-      </button>
+      <p-button 
+        (onClick)="logout()" 
+        label="Logout" 
+        icon="pi pi-sign-out" 
+        severity="danger">
+      </p-button>
     </div>
-  </header>
+  </p-card>
 
-  <!-- Navigation Tabs -->
-  <nav class="tab-navigation">
-    <button 
-      (click)="setActiveTab('orders')" 
-      [class.active]="activeTab === 'orders'"
-      class="tab-button">
-      📋 Orders
-    </button>
-    <button 
-      (click)="setActiveTab('menu')" 
-      [class.active]="activeTab === 'menu'"
-      class="tab-button">
-      🍽️ Menu Management
-    </button>
-  </nav>
-
-  <!-- Orders Tab Content -->
-  <div *ngIf="activeTab === 'orders'">
-    <!-- Stats Cards -->
-    <div class="stats-grid" *ngIf="!loading && !error">
-      <div class="stat-card">
-        <div class="stat-icon pending">
-          <svg viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div class="stat-content">
-          <h3>{{ getPendingOrdersCount() }}</h3>
-          <p>Pending Orders</p>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon completed">
-          <svg viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div class="stat-content">
-          <h3>{{ orders.length - getPendingOrdersCount() }}</h3>
-          <p>Completed Orders</p>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon revenue">
-          <svg viewBox="0 0 20 20" fill="currentColor">
-            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div class="stat-content">
-          <h3>\${{ getTotalRevenue().toFixed(2) }}</h3>
-          <p>Total Revenue</p>
-        </div>
-      </div>
-    </div>
-
-  <!-- Loading State -->
-  <div class="loading-state" *ngIf="loading">
-    <div class="loading-spinner">
-      <svg viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.25"/>
-        <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-      </svg>
-    </div>
-    <p>Loading orders...</p>
-  </div>
-
-  <!-- Error State -->
-  <div class="error-state" *ngIf="error && !loading">
-    <div class="error-icon">
-      <svg viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-      </svg>
-    </div>
-    <h3>Failed to Load Orders</h3>
-    <p>{{ error }}</p>
-    <button (click)="retryLoadOrders()" class="retry-btn">Try Again</button>
-  </div>
-
-  <!-- Orders List -->
-  <div class="orders-section" *ngIf="!loading && !error">
-    <div class="section-header">
-      <h2>Recent Orders</h2>
-      <button (click)="loadOrders()" class="refresh-btn">
-        <svg viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-        </svg>
-        Refresh
-      </button>
-    </div>
-
-    <div class="orders-grid" *ngIf="orders.length > 0">
-      <div class="order-card" *ngFor="let order of orders">
-        <div class="order-header">
-          <div class="customer-info">
-            <h4>{{ order.customerName }}</h4>
-            <p>{{ order.createdAt | date:'medium' }}</p>
-          </div>
-          
-          <div class="order-status">
-            <span [class]="getStatusClass(order.status)">
-              {{ order.status | titlecase }}
-            </span>
-            
-            <button
-              *ngIf="order.status === 'pending'"
-              (click)="markAsCompleted(order)"
-              class="complete-btn">
-              Mark Complete
-            </button>
-          </div>
-        </div>
-
-        <div class="order-items">
-          <h5>Order Items:</h5>
-          <div class="item-list">
-            <div class="order-item" *ngFor="let item of order.items">
-              <div class="item-main">
-                <span class="item-name">{{ item.quantity }}x {{ item.title }}</span>
-                <span class="item-price">\${{ (item.price * item.quantity).toFixed(2) }}</span>
-              </div>
-              
-              <div class="item-details" *ngIf="hasItemOptions(item)">
-                <span *ngIf="item.spiceLevel" class="detail">Spice: {{ item.spiceLevel }}</span>
-                <span *ngIf="item.iceLevel" class="detail">Ice: {{ item.iceLevel }}</span>
-                <span *ngIf="item.sugarLevel" class="detail">Sugar: {{ item.sugarLevel }}</span>
-                <span *ngIf="item.topping && item.topping !== 'None'" class="detail">Topping: {{ item.topping }}</span>
-                <span *ngIf="item.soupType" class="detail">Soup: {{ item.soupType }}</span>
-                <span *ngIf="item.specialInstructions" class="detail special">{{ item.specialInstructions }}</span>
-              </div>
+  <!-- Tab View -->
+  <p-tabView>
+    <p-tabPanel header="📋 Orders" [selected]="activeTab === 'orders'">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6" *ngIf="!loading && !error">
+        <p-card>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-400 rounded-lg flex items-center justify-center">
+              <i class="pi pi-clock text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ getPendingOrdersCount() }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm">Pending Orders</p>
             </div>
           </div>
+        </p-card>
+
+        <p-card>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 rounded-lg flex items-center justify-center">
+              <i class="pi pi-check-circle text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ orders.length - getPendingOrdersCount() }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm">Completed Orders</p>
+            </div>
+          </div>
+        </p-card>
+
+        <p-card>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center">
+              <i class="pi pi-dollar text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">${{ getTotalRevenue().toFixed(2) }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm">Total Revenue</p>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Loading State -->
+      <div class="flex flex-col items-center justify-center py-16" *ngIf="loading">
+        <p-progressSpinner></p-progressSpinner>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">Loading orders...</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="text-center py-16" *ngIf="error && !loading">
+        <i class="pi pi-exclamation-triangle text-6xl text-red-500 mb-4"></i>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Failed to Load Orders</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">{{ error }}</p>
+        <p-button (onClick)="retryLoadOrders()" label="Try Again" icon="pi pi-refresh"></p-button>
+      </div>
+
+      <!-- Orders List -->
+      <div *ngIf="!loading && !error">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white">Recent Orders</h2>
+          <p-button (onClick)="loadOrders()" icon="pi pi-refresh" label="Refresh" [outlined]="true"></p-button>
         </div>
 
-        <div class="order-footer">
-          <div class="payment-info">
-            <span>Payment: {{ order.paymentMethod | uppercase }}</span>
-          </div>
-          <div class="order-total">
-            <strong>Total: \${{ order.total.toFixed(2) }}</strong>
-          </div>
+        <div class="grid gap-6" *ngIf="orders.length > 0">
+          <p-card *ngFor="let order of orders" class="hover:shadow-lg transition-shadow">
+            <div class="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
+              <div>
+                <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">{{ order.customerName }}</h4>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">{{ order.createdAt | date:'medium' }}</p>
+              </div>
+              <div class="flex items-center gap-3">
+                                 <p-tag 
+                   [value]="order.status | titlecase" 
+                   [severity]="order.status === 'completed' ? 'success' : 'warn'">
+                 </p-tag>
+                <p-button 
+                  *ngIf="order.status === 'pending'"
+                  (onClick)="markAsCompleted(order)"
+                  label="Mark Complete"
+                  size="small"
+                  severity="success">
+                </p-button>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h5 class="font-semibold text-gray-900 dark:text-white mb-3">Order Items:</h5>
+              <div class="space-y-3">
+                <div *ngFor="let item of order.items" class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="font-medium text-gray-900 dark:text-white">{{ item.quantity }}x {{ item.title }}</span>
+                    <span class="font-semibold text-red-600 dark:text-red-400">${{ (item.price * item.quantity).toFixed(2) }}</span>
+                  </div>
+                  <div class="flex flex-wrap gap-2" *ngIf="hasItemOptions(item)">
+                    <p-tag *ngIf="item.spiceLevel" value="Spice: {{ item.spiceLevel }}" severity="info"></p-tag>
+                    <p-tag *ngIf="item.iceLevel" value="Ice: {{ item.iceLevel }}" severity="info"></p-tag>
+                    <p-tag *ngIf="item.sugarLevel" value="Sugar: {{ item.sugarLevel }}" severity="info"></p-tag>
+                    <p-tag *ngIf="item.topping && item.topping !== 'None'" value="Topping: {{ item.topping }}" severity="info"></p-tag>
+                    <p-tag *ngIf="item.soupType" value="Soup: {{ item.soupType }}" severity="info"></p-tag>
+                                         <p-tag *ngIf="item.specialInstructions" value="{{ item.specialInstructions }}" severity="warn"></p-tag>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <span class="text-gray-600 dark:text-gray-400 text-sm">Payment: {{ order.paymentMethod | uppercase }}</span>
+              <span class="text-lg font-bold text-gray-900 dark:text-white">Total: ${{ order.total.toFixed(2) }}</span>
+            </div>
+          </p-card>
+        </div>
+
+        <div class="text-center py-16" *ngIf="orders.length === 0">
+          <i class="pi pi-list text-6xl text-gray-400 mb-4"></i>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Orders Yet</h3>
+          <p class="text-gray-600 dark:text-gray-400">Orders will appear here when customers place them.</p>
         </div>
       </div>
-    </div>
+    </p-tabPanel>
 
-    <div class="empty-state" *ngIf="orders.length === 0">
-      <div class="empty-icon">
-        <svg viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
-        </svg>
-      </div>
-      <h3>No Orders Yet</h3>
-      <p>Orders will appear here when customers place them.</p>
-    </div>
-  </div>
-  </div>
-
-  <!-- Menu Management Tab Content -->
-  <div *ngIf="activeTab === 'menu'">
-    <div class="menu-management">
+    <p-tabPanel header="🍽️ Menu Management" [selected]="activeTab === 'menu'">
       <!-- Menu Stats -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon menu">
-            <span>🍹</span>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <p-card>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 text-white rounded-lg flex items-center justify-center">
+              <span class="text-xl">🍹</span>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ drinks.length }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm">Drinks</p>
+            </div>
           </div>
-          <div class="stat-content">
-            <h3>{{ drinks.length }}</h3>
-            <p>Drinks</p>
-          </div>
-        </div>
+        </p-card>
 
-        <div class="stat-card">
-          <div class="stat-icon menu">
-            <span>🍜</span>
+        <p-card>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 text-white rounded-lg flex items-center justify-center">
+              <span class="text-xl">🍜</span>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ mainDishes.length }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm">Main Dishes</p>
+            </div>
           </div>
-          <div class="stat-content">
-            <h3>{{ mainDishes.length }}</h3>
-            <p>Main Dishes</p>
-          </div>
-        </div>
+        </p-card>
 
-        <div class="stat-card">
-          <div class="stat-icon menu">
-            <span>🥗</span>
+        <p-card>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 text-white rounded-lg flex items-center justify-center">
+              <span class="text-xl">🥗</span>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">{{ sideDishes.length }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm">Side Dishes</p>
+            </div>
           </div>
-          <div class="stat-content">
-            <h3>{{ sideDishes.length }}</h3>
-            <p>Side Dishes</p>
-          </div>
-        </div>
+        </p-card>
       </div>
 
       <!-- Menu Category Tabs -->
-      <div class="menu-tabs">
-        <button 
-          (click)="setMenuCategory('drinks')" 
-          [class.active]="menuCategory === 'drinks'"
-          class="menu-tab-button">
-          🍹 Drinks
-        </button>
-        <button 
-          (click)="setMenuCategory('main-dishes')" 
-          [class.active]="menuCategory === 'main-dishes'"
-          class="menu-tab-button">
-          🍜 Main Dishes
-        </button>
-        <button 
-          (click)="setMenuCategory('side-dishes')" 
-          [class.active]="menuCategory === 'side-dishes'"
-          class="menu-tab-button">
-          🥗 Side Dishes
-        </button>
-      </div>
+             <p-tabView [(activeIndex)]="menuTabIndex" (onChange)="onMenuTabChange($event)">
+        <p-tabPanel header="🍹 Drinks">
+          <div class="mb-4">
+            <p-button (onClick)="openAddForm()" label="Add New Drink" icon="pi pi-plus" severity="success"></p-button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p-card *ngFor="let drink of drinks" class="hover:shadow-lg transition-shadow">
+              <div class="h-48 mb-4 overflow-hidden rounded-lg">
+                <img [src]="drink.imageUrl" [alt]="drink.name" class="w-full h-full object-cover">
+              </div>
+              <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ drink.name }}</h4>
+              <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">{{ drink.description }}</p>
+              <p class="text-gray-500 dark:text-gray-500 text-xs mb-3">Category: {{ drink.category }}</p>
+              <p class="text-xl font-bold text-red-600 dark:text-red-400 mb-4">${{ drink.price.toFixed(2) }}</p>
+              <div class="flex gap-2">
+                <p-button (onClick)="editItem('drinks', drink)" label="Edit" icon="pi pi-edit" [outlined]="true" class="flex-1"></p-button>
+                <p-button (onClick)="deleteItem('drinks', drink._id!)" label="Delete" icon="pi pi-trash" severity="danger" [outlined]="true" class="flex-1"></p-button>
+              </div>
+            </p-card>
+          </div>
+        </p-tabPanel>
 
-      <!-- Add New Item Button -->
-      <div class="add-item-section">
-        <button (click)="openAddForm()" class="add-btn">
-          <svg viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-          </svg>
-          Add New {{ menuCategory === 'drinks' ? 'Drink' : (menuCategory === 'main-dishes' ? 'Main Dish' : 'Side Dish') }}
-        </button>
-      </div>
+        <p-tabPanel header="🍜 Main Dishes">
+          <div class="mb-4">
+            <p-button (onClick)="openAddForm()" label="Add New Main Dish" icon="pi pi-plus" severity="success"></p-button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p-card *ngFor="let dish of mainDishes" class="hover:shadow-lg transition-shadow">
+              <div class="h-48 mb-4 overflow-hidden rounded-lg">
+                <img [src]="dish.imageSrc" [alt]="dish.title" class="w-full h-full object-cover">
+              </div>
+              <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ dish.title }}</h4>
+              <p class="text-xl font-bold text-red-600 dark:text-red-400 mb-4">${{ dish.price.toFixed(2) }}</p>
+              <div class="flex gap-2">
+                <p-button (onClick)="editItem('main-dishes', dish)" label="Edit" icon="pi pi-edit" [outlined]="true" class="flex-1"></p-button>
+                <p-button (onClick)="deleteItem('main-dishes', dish._id!)" label="Delete" icon="pi pi-trash" severity="danger" [outlined]="true" class="flex-1"></p-button>
+              </div>
+            </p-card>
+          </div>
+        </p-tabPanel>
 
-      <!-- Drinks List -->
-      <div *ngIf="menuCategory === 'drinks'" class="menu-items-grid">
-        <div class="menu-item-card" *ngFor="let drink of drinks">
-          <div class="item-image">
-            <img [src]="drink.imageUrl" [alt]="drink.name" />
+        <p-tabPanel header="🥗 Side Dishes">
+          <div class="mb-4">
+            <p-button (onClick)="openAddForm()" label="Add New Side Dish" icon="pi pi-plus" severity="success"></p-button>
           </div>
-          <div class="item-content">
-            <h4>{{ drink.name }}</h4>
-            <p class="item-description">{{ drink.description }}</p>
-            <p class="item-category">Category: {{ drink.category }}</p>
-            <p class="item-price">\${{ drink.price.toFixed(2) }}</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p-card *ngFor="let dish of sideDishes" class="hover:shadow-lg transition-shadow">
+              <div class="h-48 mb-4 overflow-hidden rounded-lg">
+                <img [src]="dish.imageSrc" [alt]="dish.title" class="w-full h-full object-cover">
+              </div>
+              <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ dish.title }}</h4>
+              <p class="text-xl font-bold text-red-600 dark:text-red-400 mb-4">${{ dish.price.toFixed(2) }}</p>
+              <div class="flex gap-2">
+                <p-button (onClick)="editItem('side-dishes', dish)" label="Edit" icon="pi pi-edit" [outlined]="true" class="flex-1"></p-button>
+                <p-button (onClick)="deleteItem('side-dishes', dish._id!)" label="Delete" icon="pi pi-trash" severity="danger" [outlined]="true" class="flex-1"></p-button>
+              </div>
+            </p-card>
           </div>
-          <div class="item-actions">
-            <button (click)="editItem('drinks', drink)" class="edit-btn">Edit</button>
-            <button (click)="deleteItem('drinks', drink._id!)" class="delete-btn">Delete</button>
-          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+  </p-tabView>
+
+  <!-- Add/Edit Form Modal -->
+  <p-dialog 
+    [header]="(isEditing ? 'Edit' : 'Add New') + ' ' + getFormTitle()" 
+    [(visible)]="showForm" 
+    [modal]="true" 
+    [closable]="true"
+    [style]="{width: '500px'}"
+    [maximizable]="false">
+    
+    <form (ngSubmit)="saveItem()" #itemForm="ngForm" class="space-y-4">
+      <!-- Drink Form -->
+      <div *ngIf="menuCategory === 'drinks'" class="space-y-4">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name:</label>
+          <input pInputText id="name" [(ngModel)]="formData.name" name="name" required class="w-full" />
+        </div>
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description:</label>
+          <textarea pInputTextarea id="description" [(ngModel)]="formData.description" name="description" required class="w-full" rows="3"></textarea>
+        </div>
+        <div>
+          <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category:</label>
+          <input pInputText id="category" [(ngModel)]="formData.category" name="category" required class="w-full" />
+        </div>
+        <div>
+          <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Price:</label>
+          <p-inputNumber 
+            id="price" 
+            [(ngModel)]="formData.price" 
+            name="price" 
+            mode="currency" 
+            currency="USD" 
+            [minFractionDigits]="2"
+            [min]="0"
+            required
+            class="w-full">
+          </p-inputNumber>
+        </div>
+        <div>
+          <label for="imageUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Image URL:</label>
+          <input pInputText id="imageUrl" [(ngModel)]="formData.imageUrl" name="imageUrl" required class="w-full" />
         </div>
       </div>
 
-      <!-- Main Dishes List -->
-      <div *ngIf="menuCategory === 'main-dishes'" class="menu-items-grid">
-        <div class="menu-item-card" *ngFor="let dish of mainDishes">
-          <div class="item-image">
-            <img [src]="dish.imageSrc" [alt]="dish.title" />
-          </div>
-          <div class="item-content">
-            <h4>{{ dish.title }}</h4>
-            <p class="item-price">\${{ dish.price.toFixed(2) }}</p>
-          </div>
-          <div class="item-actions">
-            <button (click)="editItem('main-dishes', dish)" class="edit-btn">Edit</button>
-            <button (click)="deleteItem('main-dishes', dish._id!)" class="delete-btn">Delete</button>
-          </div>
+      <!-- Main/Side Dish Form -->
+      <div *ngIf="menuCategory !== 'drinks'" class="space-y-4">
+        <div>
+          <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title:</label>
+          <input pInputText id="title" [(ngModel)]="formData.title" name="title" required class="w-full" />
+        </div>
+        <div>
+          <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Price:</label>
+          <p-inputNumber 
+            id="price" 
+            [(ngModel)]="formData.price" 
+            name="price" 
+            mode="currency" 
+            currency="USD" 
+            [minFractionDigits]="2"
+            [min]="0"
+            required
+            class="w-full">
+          </p-inputNumber>
+        </div>
+        <div>
+          <label for="imageSrc" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Image URL:</label>
+          <input pInputText id="imageSrc" [(ngModel)]="formData.imageSrc" name="imageSrc" required class="w-full" />
         </div>
       </div>
 
-      <!-- Side Dishes List -->
-      <div *ngIf="menuCategory === 'side-dishes'" class="menu-items-grid">
-        <div class="menu-item-card" *ngFor="let dish of sideDishes">
-          <div class="item-image">
-            <img [src]="dish.imageSrc" [alt]="dish.title" />
-          </div>
-          <div class="item-content">
-            <h4>{{ dish.title }}</h4>
-            <p class="item-price">\${{ dish.price.toFixed(2) }}</p>
-          </div>
-          <div class="item-actions">
-            <button (click)="editItem('side-dishes', dish)" class="edit-btn">Edit</button>
-            <button (click)="deleteItem('side-dishes', dish._id!)" class="delete-btn">Delete</button>
-          </div>
-        </div>
+      <div class="flex justify-end gap-3 pt-4">
+        <p-button type="button" (onClick)="closeForm()" label="Cancel" [outlined]="true"></p-button>
+        <p-button type="submit" [label]="isEditing ? 'Update' : 'Create'" [disabled]="!itemForm.form.valid"></p-button>
       </div>
-
-      <!-- Add/Edit Form Modal -->
-      <div class="modal-overlay" *ngIf="showForm" (click)="closeForm()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h3>{{ isEditing ? 'Edit' : 'Add New' }} {{ getFormTitle() }}</h3>
-            <button (click)="closeForm()" class="close-btn">&times;</button>
-          </div>
-          
-          <form (ngSubmit)="saveItem()" #itemForm="ngForm" class="item-form">
-            <!-- Drink Form -->
-            <div *ngIf="menuCategory === 'drinks'">
-              <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" id="name" [(ngModel)]="formData.name" name="name" required />
-              </div>
-              <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea id="description" [(ngModel)]="formData.description" name="description" required></textarea>
-              </div>
-              <div class="form-group">
-                <label for="category">Category:</label>
-                <input type="text" id="category" [(ngModel)]="formData.category" name="category" required />
-              </div>
-              <div class="form-group">
-                <label for="price">Price:</label>
-                <input type="number" id="price" [(ngModel)]="formData.price" name="price" step="0.01" required />
-              </div>
-              <div class="form-group">
-                <label for="imageUrl">Image URL:</label>
-                <input type="url" id="imageUrl" [(ngModel)]="formData.imageUrl" name="imageUrl" required />
-              </div>
-            </div>
-
-            <!-- Main/Side Dish Form -->
-            <div *ngIf="menuCategory !== 'drinks'">
-              <div class="form-group">
-                <label for="title">Title:</label>
-                <input type="text" id="title" [(ngModel)]="formData.title" name="title" required />
-              </div>
-              <div class="form-group">
-                <label for="price">Price:</label>
-                <input type="number" id="price" [(ngModel)]="formData.price" name="price" step="0.01" required />
-              </div>
-              <div class="form-group">
-                <label for="imageSrc">Image URL:</label>
-                <input type="url" id="imageSrc" [(ngModel)]="formData.imageSrc" name="imageSrc" required />
-              </div>
-            </div>
-
-            <div class="form-actions">
-              <button type="button" (click)="closeForm()" class="cancel-btn">Cancel</button>
-              <button type="submit" [disabled]="!itemForm.form.valid" class="save-btn">
-                {{ isEditing ? 'Update' : 'Create' }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+    </form>
+  </p-dialog>
 </div> 

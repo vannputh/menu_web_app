@@ -3,6 +3,22 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
+
+// PrimeNG Components
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { TabViewModule } from 'primeng/tabview';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DataViewModule } from 'primeng/dataview';
+import { TagModule } from 'primeng/tag';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextarea } from 'primeng/inputtextarea';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { MessagesModule } from 'primeng/messages';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+
 import { OrderService } from '../../shared/services/order.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { MenuManagementService, Drink, MainDish, SideDish } from '../../shared/services/menu-management.service';
@@ -11,7 +27,23 @@ import { Order } from '../../shared/interfaces/order.interface';
 @Component({
     selector: 'app-admin-dashboard',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [
+        CommonModule, 
+        FormsModule,
+        CardModule,
+        ButtonModule,
+        DialogModule,
+        TabViewModule,
+        ProgressSpinnerModule,
+        DataViewModule,
+        TagModule,
+        InputTextModule,
+        InputTextarea,
+        InputNumberModule,
+        MessagesModule,
+        ToastModule
+    ],
+    providers: [MessageService],
     templateUrl: './admin-dashboard.component.html',
     styleUrls: ['./admin-dashboard.component.scss']
 })
@@ -26,6 +58,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     
     // Menu management properties
     menuCategory: 'drinks' | 'main-dishes' | 'side-dishes' = 'drinks';
+    menuTabIndex = 0;
     drinks: Drink[] = [];
     mainDishes: MainDish[] = [];
     sideDishes: SideDish[] = [];
@@ -42,7 +75,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         private orderService: OrderService,
         private authService: AuthService,
         private menuService: MenuManagementService,
-        private router: Router
+        private router: Router,
+        private messageService: MessageService
     ) {}
 
     ngOnInit(): void {
@@ -135,6 +169,22 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
     setMenuCategory(category: 'drinks' | 'main-dishes' | 'side-dishes'): void {
         this.menuCategory = category;
+        this.updateMenuTabIndex();
+    }
+
+    updateMenuTabIndex(): void {
+        switch (this.menuCategory) {
+            case 'drinks': this.menuTabIndex = 0; break;
+            case 'main-dishes': this.menuTabIndex = 1; break;
+            case 'side-dishes': this.menuTabIndex = 2; break;
+            default: this.menuTabIndex = 0;
+        }
+    }
+
+    onMenuTabChange(event: any): void {
+        const categories: ('drinks' | 'main-dishes' | 'side-dishes')[] = ['drinks', 'main-dishes', 'side-dishes'];
+        this.menuCategory = categories[event.index] || 'drinks';
+        this.menuTabIndex = event.index;
     }
 
     // Menu management methods
