@@ -1,4 +1,4 @@
-# 🍽️ Menu Web App
+# 🍽️ Menu Web App 
 
 A **modern, scalable restaurant menu management system** built with Angular and TypeScript. This application provides a comprehensive solution for menu browsing, order management, and administrative control using contemporary web development patterns.
 
