@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { CartDialogComponent } from '../components/cart-dialog/cart-dialog.component';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { MenuItem } from '../interfaces/menu-item.interface';
 import { CartItem } from '../interfaces/cart-item.interface';
 import { CartService } from '../../cart/cart.service';
@@ -13,24 +12,33 @@ export interface CartDialogData {
   providedIn: 'root'
 })
 export class CartDialogService {
+  private _dialogVisible = new BehaviorSubject<boolean>(false);
+  private _dialogData = new BehaviorSubject<CartDialogData | null>(null);
   
-  constructor(
-    private dialog: MatDialog,
-    private cartService: CartService
-  ) {}
+  public dialogVisible$ = this._dialogVisible.asObservable();
+  public dialogData$ = this._dialogData.asObservable();
+  
+  constructor(private cartService: CartService) {}
 
   openAddToCartDialog(menuItem: MenuItem): void {
-    const dialogRef = this.dialog.open(CartDialogComponent, {
-      width: '600px',
-      disableClose: true,
-      data: { menuItem }
-    });
+    this._dialogData.next({ menuItem });
+    this._dialogVisible.next(true);
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.addToCart(menuItem, result);
-      }
-    });
+  closeDialog(): void {
+    this._dialogVisible.next(false);
+    // Clear data after a short delay to allow dialog animation
+    setTimeout(() => {
+      this._dialogData.next(null);
+    }, 300);
+  }
+
+  confirmAddToCart(dialogResult: any): void {
+    const currentData = this._dialogData.value;
+    if (currentData) {
+      this.addToCart(currentData.menuItem, dialogResult);
+      this.closeDialog();
+    }
   }
 
   private addToCart(menuItem: MenuItem, dialogResult: any): void {

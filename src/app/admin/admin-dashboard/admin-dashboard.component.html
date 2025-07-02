@@ -3,8 +3,8 @@
   <header class="dashboard-header">
     <div class="header-content">
       <div class="header-left">
-        <h1>Orders Dashboard</h1>
-        <p>Manage your restaurant orders</p>
+        <h1>Admin Dashboard</h1>
+        <p>Manage your restaurant</p>
       </div>
       
       <button (click)="logout()" class="logout-btn">
@@ -16,45 +16,63 @@
     </div>
   </header>
 
-  <!-- Stats Cards -->
-  <div class="stats-grid" *ngIf="!loading && !error">
-    <div class="stat-card">
-      <div class="stat-icon pending">
-        <svg viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-        </svg>
-      </div>
-      <div class="stat-content">
-        <h3>{{ getPendingOrdersCount() }}</h3>
-        <p>Pending Orders</p>
-      </div>
-    </div>
+  <!-- Navigation Tabs -->
+  <nav class="tab-navigation">
+    <button 
+      (click)="setActiveTab('orders')" 
+      [class.active]="activeTab === 'orders'"
+      class="tab-button">
+      📋 Orders
+    </button>
+    <button 
+      (click)="setActiveTab('menu')" 
+      [class.active]="activeTab === 'menu'"
+      class="tab-button">
+      🍽️ Menu Management
+    </button>
+  </nav>
 
-    <div class="stat-card">
-      <div class="stat-icon completed">
-        <svg viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-        </svg>
+  <!-- Orders Tab Content -->
+  <div *ngIf="activeTab === 'orders'">
+    <!-- Stats Cards -->
+    <div class="stats-grid" *ngIf="!loading && !error">
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="stat-content">
+          <h3>{{ getPendingOrdersCount() }}</h3>
+          <p>Pending Orders</p>
+        </div>
       </div>
-      <div class="stat-content">
-        <h3>{{ orders.length - getPendingOrdersCount() }}</h3>
-        <p>Completed Orders</p>
-      </div>
-    </div>
 
-    <div class="stat-card">
-      <div class="stat-icon revenue">
-        <svg viewBox="0 0 20 20" fill="currentColor">
-          <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" />
-        </svg>
+      <div class="stat-card">
+        <div class="stat-icon completed">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="stat-content">
+          <h3>{{ orders.length - getPendingOrdersCount() }}</h3>
+          <p>Completed Orders</p>
+        </div>
       </div>
-      <div class="stat-content">
-        <h3>\${{ getTotalRevenue().toFixed(2) }}</h3>
-        <p>Total Revenue</p>
+
+      <div class="stat-card">
+        <div class="stat-icon revenue">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="stat-content">
+          <h3>\${{ getTotalRevenue().toFixed(2) }}</h3>
+          <p>Total Revenue</p>
+        </div>
       </div>
     </div>
-  </div>
 
   <!-- Loading State -->
   <div class="loading-state" *ngIf="loading">
@@ -153,6 +171,189 @@
       </div>
       <h3>No Orders Yet</h3>
       <p>Orders will appear here when customers place them.</p>
+    </div>
+  </div>
+  </div>
+
+  <!-- Menu Management Tab Content -->
+  <div *ngIf="activeTab === 'menu'">
+    <div class="menu-management">
+      <!-- Menu Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon menu">
+            <span>🍹</span>
+          </div>
+          <div class="stat-content">
+            <h3>{{ drinks.length }}</h3>
+            <p>Drinks</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon menu">
+            <span>🍜</span>
+          </div>
+          <div class="stat-content">
+            <h3>{{ mainDishes.length }}</h3>
+            <p>Main Dishes</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon menu">
+            <span>🥗</span>
+          </div>
+          <div class="stat-content">
+            <h3>{{ sideDishes.length }}</h3>
+            <p>Side Dishes</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Category Tabs -->
+      <div class="menu-tabs">
+        <button 
+          (click)="setMenuCategory('drinks')" 
+          [class.active]="menuCategory === 'drinks'"
+          class="menu-tab-button">
+          🍹 Drinks
+        </button>
+        <button 
+          (click)="setMenuCategory('main-dishes')" 
+          [class.active]="menuCategory === 'main-dishes'"
+          class="menu-tab-button">
+          🍜 Main Dishes
+        </button>
+        <button 
+          (click)="setMenuCategory('side-dishes')" 
+          [class.active]="menuCategory === 'side-dishes'"
+          class="menu-tab-button">
+          🥗 Side Dishes
+        </button>
+      </div>
+
+      <!-- Add New Item Button -->
+      <div class="add-item-section">
+        <button (click)="openAddForm()" class="add-btn">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+          Add New {{ menuCategory === 'drinks' ? 'Drink' : (menuCategory === 'main-dishes' ? 'Main Dish' : 'Side Dish') }}
+        </button>
+      </div>
+
+      <!-- Drinks List -->
+      <div *ngIf="menuCategory === 'drinks'" class="menu-items-grid">
+        <div class="menu-item-card" *ngFor="let drink of drinks">
+          <div class="item-image">
+            <img [src]="drink.imageUrl" [alt]="drink.name" />
+          </div>
+          <div class="item-content">
+            <h4>{{ drink.name }}</h4>
+            <p class="item-description">{{ drink.description }}</p>
+            <p class="item-category">Category: {{ drink.category }}</p>
+            <p class="item-price">\${{ drink.price.toFixed(2) }}</p>
+          </div>
+          <div class="item-actions">
+            <button (click)="editItem('drinks', drink)" class="edit-btn">Edit</button>
+            <button (click)="deleteItem('drinks', drink._id!)" class="delete-btn">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Dishes List -->
+      <div *ngIf="menuCategory === 'main-dishes'" class="menu-items-grid">
+        <div class="menu-item-card" *ngFor="let dish of mainDishes">
+          <div class="item-image">
+            <img [src]="dish.imageSrc" [alt]="dish.title" />
+          </div>
+          <div class="item-content">
+            <h4>{{ dish.title }}</h4>
+            <p class="item-price">\${{ dish.price.toFixed(2) }}</p>
+          </div>
+          <div class="item-actions">
+            <button (click)="editItem('main-dishes', dish)" class="edit-btn">Edit</button>
+            <button (click)="deleteItem('main-dishes', dish._id!)" class="delete-btn">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side Dishes List -->
+      <div *ngIf="menuCategory === 'side-dishes'" class="menu-items-grid">
+        <div class="menu-item-card" *ngFor="let dish of sideDishes">
+          <div class="item-image">
+            <img [src]="dish.imageSrc" [alt]="dish.title" />
+          </div>
+          <div class="item-content">
+            <h4>{{ dish.title }}</h4>
+            <p class="item-price">\${{ dish.price.toFixed(2) }}</p>
+          </div>
+          <div class="item-actions">
+            <button (click)="editItem('side-dishes', dish)" class="edit-btn">Edit</button>
+            <button (click)="deleteItem('side-dishes', dish._id!)" class="delete-btn">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add/Edit Form Modal -->
+      <div class="modal-overlay" *ngIf="showForm" (click)="closeForm()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>{{ isEditing ? 'Edit' : 'Add New' }} {{ getFormTitle() }}</h3>
+            <button (click)="closeForm()" class="close-btn">&times;</button>
+          </div>
+          
+          <form (ngSubmit)="saveItem()" #itemForm="ngForm" class="item-form">
+            <!-- Drink Form -->
+            <div *ngIf="menuCategory === 'drinks'">
+              <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" [(ngModel)]="formData.name" name="name" required />
+              </div>
+              <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" [(ngModel)]="formData.description" name="description" required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="category">Category:</label>
+                <input type="text" id="category" [(ngModel)]="formData.category" name="category" required />
+              </div>
+              <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" id="price" [(ngModel)]="formData.price" name="price" step="0.01" required />
+              </div>
+              <div class="form-group">
+                <label for="imageUrl">Image URL:</label>
+                <input type="url" id="imageUrl" [(ngModel)]="formData.imageUrl" name="imageUrl" required />
+              </div>
+            </div>
+
+            <!-- Main/Side Dish Form -->
+            <div *ngIf="menuCategory !== 'drinks'">
+              <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" [(ngModel)]="formData.title" name="title" required />
+              </div>
+              <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" id="price" [(ngModel)]="formData.price" name="price" step="0.01" required />
+              </div>
+              <div class="form-group">
+                <label for="imageSrc">Image URL:</label>
+                <input type="url" id="imageSrc" [(ngModel)]="formData.imageSrc" name="imageSrc" required />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" (click)="closeForm()" class="cancel-btn">Cancel</button>
+              <button type="submit" [disabled]="!itemForm.form.valid" class="save-btn">
+                {{ isEditing ? 'Update' : 'Create' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div> 

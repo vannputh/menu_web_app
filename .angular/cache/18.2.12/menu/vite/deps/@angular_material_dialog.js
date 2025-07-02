@@ -11,16 +11,6 @@ import {
   TemplatePortal
 } from "./chunk-YJNIIK3O.js";
 import {
-  animate,
-  animateChild,
-  group,
-  query,
-  state,
-  style,
-  transition,
-  trigger
-} from "./chunk-FKWK4J2G.js";
-import {
   A11yModule,
   Directionality,
   ESCAPE,
@@ -33,6 +23,16 @@ import {
   coerceNumberProperty,
   hasModifierKey
 } from "./chunk-UMF4YINO.js";
+import {
+  animate,
+  animateChild,
+  group,
+  query,
+  state,
+  style,
+  transition,
+  trigger
+} from "./chunk-XLOUI7TL.js";
 import {
   DOCUMENT,
   Location

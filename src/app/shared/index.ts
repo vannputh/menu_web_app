@@ -5,13 +5,12 @@ export * from './interfaces/order.interface';
 
 // Services
 export * from './services/menu.service';
-export * from './services/cart-dialog.service';
+export { CartDialogService } from './services/cart-dialog.service';
 export * from './services/order.service';
 export * from './services/auth.service';
 
 // Components
 export * from './components/menu-category/menu-category.component';
 export * from './components/cart-dialog/cart-dialog.component';
-export * from './components/base-card/base-card.component';
 export * from './components/cart-item/cart-item.component';
 export * from './components/receipt-dialog/receipt-dialog.component'; 

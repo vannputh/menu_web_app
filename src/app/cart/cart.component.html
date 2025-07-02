@@ -1,209 +1,182 @@
-<div class="flex justify-center items-center min-h-screen font-poppins dark:bg-gray-800">
-    <div class="w-full max-w-lg border border-gray-300 dark:border-gray-700 rounded-2xl overflow-hidden
-            shadow-[0_0_15px_rgba(0,0,0,0.1)]
-            dark:shadow-[0_0_15px_rgba(255,255,255,0.1)]
-            hover:shadow-[0_0_30px_rgba(0,0,0,0.2)]
-            dark:hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]
-            transition-all duration-300 ease-in-out
-            hover:transform hover:scale-[1.02]
-            animate-fadeIn">
-        <div class="bg-red-600 text-white text-center py-6">
-            <h2 class="text-3xl font-bold">Your KaiXin(开心) Cart</h2>
-        </div>
-        <div class="p-6 max-h-[calc(100vh-200px)] overflow-y-auto dark:bg-gray-800">
-            <div *ngFor="let item of items; let i = index" class="flex items-center mb-4 pb-4 border-b border-gray-300 dark:border-gray-700">
-                <img [src]="item.imageUrl" alt="{{ item.title }}" class="w-24 h-24 rounded-lg mr-4 object-cover">
-                <div class="flex-grow">
-                    <span class="block text-lg font-semibold mb-1 dark:text-gray-300">{{ item.title }}</span>
-                    <span class="block text-gray-600 dark:text-gray-400 mb-1">${{ item.price }}</span>
-                    <p *ngIf="item.sugarLevel" class="text-gray-500 dark:text-gray-400">Sugar Level: {{ item.sugarLevel }}</p>
-                    <p *ngIf="item.iceLevel" class="text-gray-500 dark:text-gray-400">Ice Level: {{ item.iceLevel }}</p>
-                    <p *ngIf="item.spiceLevel" class="text-gray-500 dark:text-gray-400">Spice Level: {{ item.spiceLevel }}</p>
-                    <p *ngIf="item.soupType" class="text-gray-500 dark:text-gray-400">Soup Type: {{ soupTypeNames[item.soupType] }}</p>
-                    <p *ngIf="item.specialInstructions" class="text-gray-500 dark:text-gray-400">Special Instructions: {{ item.specialInstructions }}</p>
-                    <p *ngIf="item.iced" class="text-gray-500 dark:text-gray-400">Iced: {{ item.iced }}</p>
-                    <p *ngIf="item.topping" class="text-gray-500 dark:text-gray-400">Topping: {{ item.topping }}</p>
-                </div>
-                <div class="flex items-center ml-auto mr-4">
-                    <button (click)="updateQuantity(i, item.quantity - 1)" class="bg-gray-200 dark:bg-gray-700 text-black dark:text-gray-300 px-2 py-1 rounded-lg">-</button>
-                    <span class="mx-2 text-lg dark:text-gray-300">{{ item.quantity }}</span>
-                    <button (click)="updateQuantity(i, item.quantity + 1)" class="bg-gray-200 dark:bg-gray-700 text-black dark:text-gray-300 px-2 py-1 rounded-lg">+</button>
-                </div>
-                <button (click)="removeItem(i)" class="text-red-600 dark:text-red-400 hover:font-bold">Remove</button>
-            </div>
-        </div>
-        <div class="flex justify-between p-4 bg-gray-100 dark:bg-gray-700 font-semibold text-lg dark:text-gray-300">
-            <span>Total:</span>
-            <span>${{ total.toFixed(2) }}</span>
-        </div>
-        <button (click)="checkout()" class="w-full py-4 bg-red-600 text-white text-lg rounded-b-2xl hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800">Checkout</button>
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+    
+    <div *ngIf="items.length === 0" class="text-center py-12">
+      <p class="text-xl text-gray-500">Your cart is empty</p>
+      <a routerLink="/main-dishes" class="inline-block mt-4 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+        Continue Shopping
+      </a>
     </div>
+
+    <div *ngIf="items.length > 0">
+      <!-- Cart Items -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <app-cart-item 
+          *ngFor="let item of items; let i = index"
+          [item]="item"
+          [index]="i"
+          (quantityChanged)="updateQuantity($event.index, $event.quantity)"
+          (itemRemoved)="removeItem($event)">
+        </app-cart-item>
+      </div>
+
+      <!-- Total and Checkout -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-6">
+          <span class="text-2xl font-bold">Total: ${{ total.toFixed(2) }}</span>
+        </div>
+        
+        <button (click)="checkout()" 
+                class="w-full bg-red-600 text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-red-700 transition-colors">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
-<ng-template #receiptDialog let-dialogRef="dialogRef">
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden animate-scale-in">
-            <!-- Header -->
-            <div class="bg-red-600 text-white text-center py-6">
-                <h2 class="text-3xl font-bold font-poppins">KaiXin(开心)</h2>
-                <p class="text-xl">Official Receipt</p>
-            </div>
 
-            <!-- Order Details -->
-            <div class="p-6">
-                <div class="space-y-4 mb-6">
-                    <div *ngFor="let item of items" class="flex justify-between items-center border-b pb-2 last:border-b-0 dark:border-gray-700">
-                        <div>
-                            <p class="font-medium text-gray-800 dark:text-gray-300">{{ item.title }}</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                {{ item.quantity }} x ${{ item.price }}
-                            </p>
-                            <p *ngIf="item.sugarLevel" class="text-sm text-gray-500 dark:text-gray-400">Sugar Level: {{ item.sugarLevel }}</p>
-                            <p *ngIf="item.iceLevel" class="text-sm text-gray-500 dark:text-gray-400">Ice Level: {{ item.iceLevel }}</p>
-                            <p *ngIf="item.spiceLevel" class="text-sm text-gray-500 dark:text-gray-400">Spice Level: {{ item.spiceLevel }}</p>
-                            <p *ngIf="item.soupType" class="text-sm text-gray-500 dark:text-gray-400">Soup Type: {{ soupTypeNames[item.soupType] }}</p>
-                            <p *ngIf="item.specialInstructions" class="text-sm text-gray-500 dark:text-gray-400">Special Instructions: {{ item.specialInstructions }}</p>
-                            <p *ngIf="item.iced" class="text-sm text-gray-500 dark:text-gray-400">Iced: {{ item.iced }}</p>
-                            <p *ngIf="item.topping" class="text-sm text-gray-500 dark:text-gray-400">Topping: {{ item.topping }}</p>
-                        </div>
-                        <p class="font-semibold text-gray-800 dark:text-gray-300">
-                            ${{ (item.quantity * item.price).toFixed(2) }}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Total -->
-                <div class="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-lg mb-6">
-                    <span class="text-lg font-bold text-gray-800 dark:text-gray-300">Total</span>
-                    <span class="text-2xl font-bold text-red-600">${{ total.toFixed(2) }}</span>
-                </div>
-
-                <!-- Customer Name Input -->
-                <div class="mb-6 px-6 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
-                    <div class="flex items-center">
-                        <label for="customerName" class="text-lg font-semibold text-gray-800 dark:text-gray-300 mr-4">Name</label>
-                        <input
-                                id="customerName"
-                                type="text"
-                                [(ngModel)]="customerName"
-                                class="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-red-500 outline-none bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300"
-                                placeholder="Enter your name"
-                                required
-                        />
-                    </div>
-                    <div *ngIf="errorMessage" class="text-red-600 dark:text-red-400 text-center mt-4 mb-4 p-2 border border-red-600 dark:border-red-400 rounded-lg bg-red-100 dark:bg-red-900">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-1.414-1.414L12 9.172 7.05 4.222 5.636 5.636 10.586 10.586 5.636 15.536l1.414 1.414L12 12.828l4.95 4.95 1.414-1.414-4.95-4.95 4.95-4.95z" />
-                        </svg>
-                        {{ errorMessage }}
-                    </div>
-                </div>
-
-                <!-- Payment Method -->
-                <div class="payment-method-slider flex justify-center items-center relative w-full bg-gray-100 dark:bg-gray-700 rounded-full p-2">
-                    <div class="slider flex w-full relative">
-                        <div class="slider-option flex-1 flex flex-col items-center justify-center p-4 cursor-pointer transition-colors duration-300 rounded-full" [class.active]="paymentMethod === 'cash'" (click)="paymentMethod = 'cash'">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            <span>Cash</span>
-                        </div>
-                        <div class="slider-option flex-1 flex flex-col items-center justify-center p-4 cursor-pointer transition-colors duration-300 rounded-full" [class.active]="paymentMethod === 'khqr'" (click)="paymentMethod = 'khqr'">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                            </svg>
-                            <span>KHQR</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="p-4 flex justify-between">
-                    <button
-                            (click)="dialogRef.close()"
-                            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                    >
-                        Close
-                    </button>
-                    <button
-                            (click)="confirmOrder()"
-                            class="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-800 transition-colors"
-                    >
-                        Checkout
-                    </button>
-                </div>
-            </div>
-        </div>
+<!-- Receipt Dialog -->
+<p-dialog 
+  [visible]="receiptDialogVisible" 
+  [modal]="true" 
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  header="Order Summary"
+  [style]="{width: '600px'}"
+  (onHide)="closeReceiptDialog()">
+  
+  <div class="space-y-6">
+    <!-- Customer Info -->
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Customer Name *</label>
+        <input [(ngModel)]="customerName" 
+               type="text" 
+               placeholder="Enter your name"
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+        <p *ngIf="errorMessage" class="text-red-500 text-sm mt-1">{{ errorMessage }}</p>
+      </div>
     </div>
-</ng-template>
 
-<ng-template #finalConfirmationDialog let-dialogRef="dialogRef">
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden animate-scale-in p-8 text-center relative">
-            <!-- Close Button -->
-            <button
-                    (click)="dialogRef.close(); clearCart()"
-                    class="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-400 transition-colors"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-
-            <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-300 mb-4">Thank You, {{ customerName || 'Customer'}}!</h2>
-            <p class="text-lg text-gray-600 dark:text-gray-400 mb-6">Your order will be ready in 10-15 minutes.</p>
-            <div *ngIf="paymentMethod === 'khqr' && qrCodeUrl" class="text-center mb-6">
-                <img [src]="qrCodeUrl" alt="Payment QR Code" class="mx-auto w-48 h-48 object-contain">
-                <p class="text-lg font-medium text-gray-800 dark:text-gray-300 mb-4">Scan to Pay</p>
-            </div>
-            <div *ngIf="paymentMethod === 'cash'" class="text-center mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-48 w-48 mx-auto mb-2 text-gray-800 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <p class="text-lg font-medium text-gray-800 dark:text-gray-300">Please Pay at Counter</p>
-            </div>
-            <button
-                    (click)="downloadReceipt()"
-                    class="mt-6 px-6 py-3 mr-10 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-800 transition-colors"
-            >
-                Download Receipt
-            </button>
-            <button
-                    (click)="sendEmail()"
-                    class="mt-6 px-6 py-3 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-800 transition-colors"
-            >
-                Email Receipt
-            </button>
-        </div>
+    <!-- Payment Method -->
+    <div class="space-y-3">
+      <label class="block text-sm font-semibold text-gray-700">Payment Method</label>
+      <div class="flex space-x-4">
+        <button (click)="setPaymentMethod('cash')"
+                [class]="paymentMethod === 'cash' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700'"
+                class="flex-1 py-2 px-4 rounded-lg font-medium transition-colors">
+          Cash
+        </button>
+        <button (click)="setPaymentMethod('khqr')"
+                [class]="paymentMethod === 'khqr' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700'"
+                class="flex-1 py-2 px-4 rounded-lg font-medium transition-colors">
+          KHQR
+        </button>
+      </div>
     </div>
-</ng-template>
 
-<ng-template #emailDialog let-dialogRef="dialogRef">
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden animate-scale-in p-8 text-center relative">
-            <!-- Close Button -->
-            <button
-                    (click)="dialogRef.close()"
-                    class="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-400 transition-colors"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-300 mb-4">Send Receipt</h2>
-            <input
-                    type="email"
-                    [(ngModel)]="customerEmail"
-                    class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-red-500 outline-none bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300 mb-4"
-                    placeholder="Enter your email"
-            />
-            <button
-                    (click)="sendReceiptEmail(dialogRef)"
-                    class="px-6 py-3 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-800 transition-colors"
-            >
-                Send
-            </button>
-        </div>
+    <!-- KHQR Code -->
+    <div *ngIf="paymentMethod === 'khqr'" class="text-center p-4 bg-gray-50 rounded-lg">
+      <img [src]="qrCodeUrl" alt="QR Code" class="mx-auto mb-2" style="width: 200px; height: 200px;">
+      <p class="text-sm text-gray-600">Scan this QR code with your banking app</p>
     </div>
-</ng-template>
+
+    <!-- Order Summary -->
+    <div class="border-t pt-4">
+      <h3 class="font-semibold text-lg mb-3">Order Summary</h3>
+      <div *ngFor="let item of items" class="flex justify-between items-center py-2">
+        <span>{{ item.title }} ({{ item.quantity }}x)</span>
+        <span>${{ (item.price * item.quantity).toFixed(2) }}</span>
+      </div>
+      <div class="border-t mt-3 pt-3 flex justify-between items-center font-bold text-lg">
+        <span>Total:</span>
+        <span>${{ total.toFixed(2) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end space-x-3">
+      <p-button label="Cancel" 
+                icon="pi pi-times" 
+                [text]="true"
+                (onClick)="closeReceiptDialog()">
+      </p-button>
+      <p-button label="Confirm Order" 
+                icon="pi pi-check"
+                (onClick)="confirmOrder()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Final Confirmation Dialog -->
+<p-dialog 
+  [visible]="finalConfirmationDialogVisible" 
+  [modal]="true" 
+  [closable]="true"
+  header="Order Confirmed!"
+  [style]="{width: '500px'}"
+  (onHide)="closeFinalConfirmationDialog()">
+  
+  <div class="text-center space-y-6">
+    <i class="pi pi-check-circle text-6xl text-green-500"></i>
+    <h2 class="text-2xl font-bold text-gray-900">Thank you, {{ customerName }}!</h2>
+    <p class="text-gray-600">Your order has been confirmed and is being prepared.</p>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-center space-x-3">
+      <p-button label="Download Receipt" 
+                icon="pi pi-download"
+                (onClick)="downloadReceipt()">
+      </p-button>
+      <p-button label="Email Receipt" 
+                icon="pi pi-envelope"
+                (onClick)="sendEmail()">
+      </p-button>
+      <p-button label="Done" 
+                icon="pi pi-check"
+                styleClass="p-button-success"
+                (onClick)="clearCart()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Email Dialog -->
+<p-dialog 
+  [visible]="emailDialogVisible" 
+  [modal]="true" 
+  [closable]="true"
+  header="Send Receipt via Email"
+  [style]="{width: '400px'}"
+  (onHide)="closeEmailDialog()">
+  
+  <div class="space-y-4">
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+      <input [(ngModel)]="customerEmail" 
+             type="email" 
+             placeholder="Enter your email"
+             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end space-x-3">
+      <p-button label="Cancel" 
+                icon="pi pi-times" 
+                [text]="true"
+                (onClick)="closeEmailDialog()">
+      </p-button>
+      <p-button label="Send Email" 
+                icon="pi pi-send"
+                (onClick)="sendReceiptEmail()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
 

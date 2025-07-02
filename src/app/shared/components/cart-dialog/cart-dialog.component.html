@@ -1,103 +1,186 @@
-<div class="cart-dialog">
-  <h2 mat-dialog-title>Add to Cart</h2>
+<p-dialog 
+  [visible]="visible" 
+  [modal]="true" 
+  [closable]="true"
+  [dismissableMask]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [baseZIndex]="10000"
+  [breakpoints]="{'960px': '75vw', '640px': '90vw'}"
+  [style]="{width: '600px', maxWidth: '90vw'}"
+  styleClass="custom-dialog"
+  (onHide)="onCancel()">
   
-  <div mat-dialog-content class="dialog-content">
-    <div class="item-info">
-      <img [src]="data.menuItem.imageSrc" [alt]="data.menuItem.title" class="item-image">
-      <div class="item-details">
-        <h3>{{ data.menuItem.title }}</h3>
-        <p class="price">${{ data.menuItem.price }}</p>
+  <!-- Header -->
+  <ng-template pTemplate="header">
+    <div class="flex items-center space-x-3">
+      <i class="pi pi-shopping-cart text-2xl text-blue-600"></i>
+      <span class="text-2xl font-bold text-gray-900">Add to Cart</span>
+    </div>
+  </ng-template>
+
+  <!-- Content -->
+  <div class="space-y-6" *ngIf="data">
+    <!-- Item Info -->
+    <div class="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 shadow-sm">
+      <img [src]="data.menuItem.imageSrc" 
+           [alt]="data.menuItem.title" 
+           class="w-20 h-20 object-cover rounded-lg shadow-md mr-4">
+      <div class="flex-1">
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ data.menuItem.title }}</h3>
+        <p class="text-2xl font-bold text-blue-600">${{ data.menuItem.price }}</p>
       </div>
     </div>
 
-    <div class="form-section">
-      <mat-form-field appearance="outline" class="quantity-field">
-        <mat-label>Quantity</mat-label>
-        <input matInput type="number" [(ngModel)]="quantity" min="1" max="10">
-      </mat-form-field>
+    <!-- Quantity -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700">Quantity</label>
+      <p-inputNumber 
+        [(ngModel)]="quantity" 
+        [min]="1" 
+        [max]="10" 
+        [showButtons]="true"
+        buttonLayout="horizontal"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+        styleClass="w-32"
+        inputStyleClass="text-center font-semibold">
+      </p-inputNumber>
+    </div>
 
-      <!-- Drink-specific options -->
-      <div *ngIf="isDrink()" class="drink-options">
-        <mat-form-field appearance="outline">
-          <mat-label>Sugar Level</mat-label>
-          <mat-select [(ngModel)]="sugarLevel">
-            <mat-option value="0%">0%</mat-option>
-            <mat-option value="25%">25%</mat-option>
-            <mat-option value="50%">50%</mat-option>
-            <mat-option value="75%">75%</mat-option>
-            <mat-option value="100%">100%</mat-option>
-          </mat-select>
-        </mat-form-field>
+    <!-- Drink Options -->
+    <div *ngIf="isDrink()" class="p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+      <h4 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+        <i class="pi pi-coffee text-purple-600 mr-2"></i>
+        Drink Options
+      </h4>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700">Sugar Level</label>
+          <p-dropdown 
+            [options]="sugarOptions" 
+            [(ngModel)]="sugarLevel"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full">
+          </p-dropdown>
+        </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Ice Level</mat-label>
-          <mat-select [(ngModel)]="iceLevel">
-            <mat-option value="No Ice">No Ice</mat-option>
-            <mat-option value="25%">25%</mat-option>
-            <mat-option value="50%">50%</mat-option>
-            <mat-option value="75%">75%</mat-option>
-            <mat-option value="100%">100%</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700">Ice Level</label>
+          <p-dropdown 
+            [options]="iceOptions" 
+            [(ngModel)]="iceLevel"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full">
+          </p-dropdown>
+        </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Topping</mat-label>
-          <mat-select [(ngModel)]="topping">
-            <mat-option value="None">None</mat-option>
-            <mat-option value="Pearls">Pearls</mat-option>
-            <mat-option value="Jelly">Jelly</mat-option>
-            <mat-option value="Pudding">Pudding</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700">Topping</label>
+          <p-dropdown 
+            [options]="toppingOptions" 
+            [(ngModel)]="topping"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full">
+          </p-dropdown>
+        </div>
       </div>
+    </div>
 
-      <!-- Bottled drink options -->
-      <div *ngIf="isBottled()" class="bottled-options">
-        <mat-form-field appearance="outline">
-          <mat-label>Iced</mat-label>
-          <mat-select [(ngModel)]="iced">
-            <mat-option value="yes">Yes</mat-option>
-            <mat-option value="no">No</mat-option>
-          </mat-select>
-        </mat-form-field>
+    <!-- Bottled Drink Options -->
+    <div *ngIf="isBottled()" class="p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+      <h4 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+        <i class="pi pi-shopping-bag text-green-600 mr-2"></i>
+        Bottled Drink Options
+      </h4>
+      <div class="space-y-2">
+        <label class="block text-sm font-semibold text-gray-700">Iced</label>
+        <p-dropdown 
+          [options]="icedOptions" 
+          [(ngModel)]="iced"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="w-48">
+        </p-dropdown>
       </div>
+    </div>
 
-      <!-- Main dish options -->
-      <div *ngIf="isMain()" class="main-options">
-        <mat-form-field appearance="outline">
-          <mat-label>Spice Level</mat-label>
-          <mat-select [(ngModel)]="spiceLevel">
-            <mat-option value="mild">Mild</mat-option>
-            <mat-option value="medium">Medium</mat-option>
-            <mat-option value="spicy">Spicy</mat-option>
-            <mat-option value="extra-spicy">Extra Spicy</mat-option>
-          </mat-select>
-        </mat-form-field>
+    <!-- Main Dish Options -->
+    <div *ngIf="isMain()" class="p-6 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border border-red-200">
+      <h4 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+        <i class="pi pi-sparkles text-red-600 mr-2"></i>
+        Main Dish Options
+      </h4>
+      <div class="space-y-2">
+        <label class="block text-sm font-semibold text-gray-700">Spice Level</label>
+        <p-dropdown 
+          [options]="spiceOptions" 
+          [(ngModel)]="spiceLevel"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="w-48">
+        </p-dropdown>
       </div>
+    </div>
 
-      <!-- Soup options -->
-      <div *ngIf="isSoup()" class="soup-options">
-        <mat-form-field appearance="outline">
-          <mat-label>Soup Type</mat-label>
-          <mat-select [(ngModel)]="soupType">
-            <mat-option value="sichuan_spicy">Sichuan Spicy</mat-option>
-            <mat-option value="clear_broth">Clear Broth</mat-option>
-            <mat-option value="tomato">Tomato</mat-option>
-          </mat-select>
-        </mat-form-field>
+    <!-- Soup Options -->
+    <div *ngIf="isSoup()" class="p-6 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl border border-yellow-200">
+      <h4 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+        <i class="pi pi-heart text-amber-600 mr-2"></i>
+        Soup Options
+      </h4>
+      <div class="space-y-2">
+        <label class="block text-sm font-semibold text-gray-700">Soup Type</label>
+        <p-dropdown 
+          [options]="soupOptions" 
+          [(ngModel)]="soupType"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="w-64">
+        </p-dropdown>
       </div>
+    </div>
 
-      <mat-form-field appearance="outline" class="special-instructions">
-        <mat-label>Special Instructions</mat-label>
-        <textarea matInput [(ngModel)]="specialInstructions" placeholder="Any special requests..."></textarea>
-      </mat-form-field>
+    <!-- Special Instructions -->
+    <div class="space-y-2">
+      <label class="block text-sm font-semibold text-gray-700">
+        <i class="pi pi-comment mr-1"></i>
+        Special Instructions
+      </label>
+      <textarea 
+        pInputTextarea 
+        [(ngModel)]="specialInstructions"
+        placeholder="Any special requests..."
+        rows="3"
+        class="w-full resize-none border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+      </textarea>
     </div>
   </div>
 
-  <div mat-dialog-actions class="dialog-actions">
-    <button mat-button (click)="onCancel()">Cancel</button>
-    <button mat-raised-button color="primary" (click)="onConfirm()">
-      Add to Cart - ${{ (data.menuItem.price * quantity).toFixed(2) }}
-    </button>
-  </div>
-</div> 
+  <!-- Footer -->
+  <ng-template pTemplate="footer">
+    <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+      <div class="text-xl font-bold text-gray-900">
+        Total: <span class="text-green-600">${{ getTotalPrice().toFixed(2) }}</span>
+      </div>
+      <div class="flex space-x-3">
+        <p-button 
+          label="Cancel" 
+          icon="pi pi-times"
+          [text]="true"
+          styleClass="p-button-secondary"
+          (onClick)="onCancel()">
+        </p-button>
+        <p-button 
+          label="Add to Cart" 
+          icon="pi pi-shopping-cart"
+          styleClass="p-button-success px-6"
+          (onClick)="onConfirmClick()">
+        </p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog> 

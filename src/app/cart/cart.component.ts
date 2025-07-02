@@ -1,8 +1,11 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { CartService } from './cart.service';
 import { CartItem } from '../shared/interfaces/cart-item.interface';
-import { MatDialog, MatDialogConfig, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { CartItemComponent } from '../shared/components/cart-item/cart-item.component';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 import { jsPDF } from 'jspdf';
 import { FormsModule } from '@angular/forms';
 import QRCode from 'qrcode-generator';
@@ -11,7 +14,7 @@ import QRCode from 'qrcode-generator';
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, FormsModule],
+  imports: [CommonModule, RouterModule, CartItemComponent, DialogModule, ButtonModule, FormsModule],
   styleUrls: ['./cart.component.scss']
 })
 export class CartComponent implements OnInit {
@@ -21,9 +24,10 @@ export class CartComponent implements OnInit {
   qrCodeUrl: string = '';
   errorMessage: string = '';
 
-  @ViewChild('receiptDialog', { static: true }) receiptDialog!: TemplateRef<any>;
-  @ViewChild('finalConfirmationDialog', { static: true }) finalConfirmationDialog!: TemplateRef<any>;
-  @ViewChild('emailDialog', { static: true }) emailDialog!: TemplateRef<any>;
+  // Dialog visibility flags
+  receiptDialogVisible = false;
+  finalConfirmationDialogVisible = false;
+  emailDialogVisible = false;
 
   private specialInstructions: string | undefined;
   customerName: any;
@@ -37,8 +41,7 @@ export class CartComponent implements OnInit {
   customerEmail: string = '';
   private orderId: any;
 
-
-  constructor(protected cartService: CartService, private dialog: MatDialog) {}
+  constructor(protected cartService: CartService) {}
 
   ngOnInit() {
     this.cartService.getCartItems().subscribe({
@@ -69,7 +72,7 @@ export class CartComponent implements OnInit {
     this.cartService.removeItem(index);
   }
 
-  async sendReceiptEmail(dialogRef: MatDialogRef<any>) {
+  async sendReceiptEmail() {
     if (!this.customerEmail) {
       alert('Please enter a valid email address');
       return;
@@ -96,7 +99,7 @@ export class CartComponent implements OnInit {
 
       const data = await response.json();
       console.log('Email sent successfully:', data);
-      dialogRef.close();
+      this.emailDialogVisible = false;
       this.cartService.clearCart();
       alert('Receipt has been sent to your email!');
 
@@ -107,17 +110,11 @@ export class CartComponent implements OnInit {
   }
 
   checkout() {
-  if (this.items.length === 0) {
-    return;
+    if (this.items.length === 0) {
+      return;
+    }
+    this.receiptDialogVisible = true;
   }
-
-  const dialogConfig = new MatDialogConfig();
-  dialogConfig.disableClose = true;
-  dialogConfig.autoFocus = true;
-  dialogConfig.width = '600px';
-
-  this.dialog.open(this.receiptDialog, dialogConfig);
-}
 
   generateQRCode() {
     try {
@@ -201,108 +198,61 @@ export class CartComponent implements OnInit {
       yOffset += 10;
     });
 
-    // Separator
+    // Total
     doc.setLineWidth(0.5);
-    doc.setDrawColor(0, 0, 0);
     doc.line(20, yOffset, 190, yOffset);
-
-    // Totals
     yOffset += 10;
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(0, 0, 0);
-    doc.text('Subtotal:', 120, yOffset);
-    doc.text(`$${this.total.toFixed(2)}`, 160, yOffset);
+    doc.setFontSize(12);
+    doc.text(`Total: $${this.total.toFixed(2)}`, 160, yOffset);
 
-    yOffset += 6;
-    doc.setFont('helvetica', 'normal');
-    doc.text('Tax (10%):', 120, yOffset);
-    doc.text(`$${(this.total * 0.1).toFixed(2)}`, 160, yOffset);
-
-    yOffset += 6;
-    doc.setFont('helvetica', 'bold');
-    doc.text('Total:', 120, yOffset);
-    doc.text(`$${(this.total * 1.1).toFixed(2)}`, 160, yOffset);
-
-    // Payment Method
-    yOffset += 15;
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(0, 0, 0);
-    doc.text(`Payment Method: ${this.paymentMethod.toUpperCase()}`, 20, yOffset);
-
-    // Footer
-    yOffset = 280;
-    doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150);
-    doc.text('Thank you for your purchase!', 105, yOffset, { align: 'center' });
-
-    // Return the PDF as a Blob
     return doc.output('blob');
   }
 
   downloadReceipt() {
-    // Return the PDF as a Blob
-    const doc = this.generatePDF();
-    const pdfBlob = new Blob([doc], { type: 'application/pdf' });
-
-    // Create a download link and trigger the download
+    const pdfBlob = this.generatePDF();
+    const url = URL.createObjectURL(pdfBlob);
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(pdfBlob);
+    link.href = url;
     link.download = 'receipt.pdf';
     link.click();
+    URL.revokeObjectURL(url);
   }
 
   confirmOrder() {
-  if (!this.customerName) {
-    this.errorMessage = 'Please enter your name.';
-    return;
+    if (!this.customerName.trim()) {
+      this.errorMessage = 'Please enter your name';
+      return;
+    }
+    this.receiptDialogVisible = false;
+    this.finalConfirmationDialogVisible = true;
   }
 
-  this.errorMessage = '';
-
-  const orderData = {
-    orderId: this.orderId,
-    customerEmail: this.customerEmail,
-    customerName: this.customerName,
-    items: this.items,
-    total: this.total,
-    paymentMethod: this.paymentMethod
-  };
-
-  fetch('http://localhost:3000/api/orders', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(orderData)
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Order created:', data);
-    this.orderId = data.orderId;
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '600px';
-
-    this.dialog.closeAll();
-    this.dialog.open(this.finalConfirmationDialog, dialogConfig);
-  })
-  .catch(error => {
-    console.error('Error creating order:', error);
-    this.errorMessage = 'Failed to create order. Please try again.';
-  });
-}
-
   sendEmail() {
-  const dialogConfig = new MatDialogConfig();
-  dialogConfig.disableClose = true;
-  dialogConfig.autoFocus = true;
-  dialogConfig.width = '400px';
-
-  this.dialog.open(this.emailDialog, dialogConfig);
+    this.finalConfirmationDialogVisible = false;
+    this.emailDialogVisible = true;
   }
 
   clearCart() {
     this.cartService.clearCart();
+    this.finalConfirmationDialogVisible = false;
+  }
+
+  closeReceiptDialog() {
+    this.receiptDialogVisible = false;
+    this.errorMessage = '';
+  }
+
+  closeFinalConfirmationDialog() {
+    this.finalConfirmationDialogVisible = false;
+  }
+
+  closeEmailDialog() {
+    this.emailDialogVisible = false;
+  }
+
+  setPaymentMethod(method: 'cash' | 'khqr') {
+    this.paymentMethod = method;
+    this.errorMessage = '';
   }
 }

@@ -13,3 +13,11 @@
         </span>
     </label>
 </div>
+
+<!-- Global Cart Dialog -->
+<app-cart-dialog
+  [visible]="(dialogVisible$ | async) || false"
+  [data]="dialogData$ | async"
+  (onClose)="onDialogClose()"
+  (onConfirm)="onDialogConfirm($event)">
+</app-cart-dialog>

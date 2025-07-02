@@ -12,9 +12,9 @@ import { MenuItem, MenuCategory } from '../../interfaces/menu-item.interface';
     MenuItemComponent
   ],
   template: `
-    <div class="menu-category" *ngIf="!loading">
+    <div class="p-6" *ngIf="!loading">
       <!-- Normal menu items -->
-      <div class="menu-items" *ngIf="!error">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto" *ngIf="!error">
         <app-menu-item
           *ngFor="let item of menuItems"
           [imageSrc]="item.imageSrc"
@@ -25,7 +25,7 @@ import { MenuItem, MenuCategory } from '../../interfaces/menu-item.interface';
       </div>
 
       <!-- Empty placeholder menu items for any error -->
-      <div class="menu-items" *ngIf="error">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto" *ngIf="error">
         <app-menu-item
           *ngFor="let placeholder of getPlaceholderItems()"
           [imageSrc]="placeholder.imageSrc"
@@ -37,17 +37,16 @@ import { MenuItem, MenuCategory } from '../../interfaces/menu-item.interface';
       </div>
     </div>
     
-    <div class="loading" *ngIf="loading">
-      <div class="loading-spinner">
-        <svg viewBox="0 0 24 24" class="spinner">
+    <div class="flex flex-col items-center justify-center min-h-[300px] text-center p-6" *ngIf="loading">
+      <div class="mb-4">
+        <svg viewBox="0 0 24 24" class="w-8 h-8 text-red-600 animate-spin">
           <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.25"/>
           <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
         </svg>
       </div>
-      <p>Loading menu items...</p>
+      <p class="text-lg text-gray-600 dark:text-gray-300">Loading menu items...</p>
     </div>
-  `,
-  styleUrls: ['./menu-category.component.scss']
+  `
 })
 export class MenuCategoryComponent implements OnInit {
   @Input() category!: MenuCategory;

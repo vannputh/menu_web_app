@@ -1,17 +1,19 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
 import { CartDialogService } from '../shared/services/cart-dialog.service';
 import { MenuItem, MenuItemType } from '../shared/interfaces/menu-item.interface';
-import {RouterLink} from "@angular/router";
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-menu-item',
   standalone: true,
   imports: [
     CommonModule,
-    MatButtonModule,
-    RouterLink
+    RouterLink,
+    CardModule,
+    ButtonModule
   ],
   templateUrl: './menu-item.component.html',
   styleUrls: ['./menu-item.component.scss']

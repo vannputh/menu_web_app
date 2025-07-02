@@ -116,6 +116,123 @@ app.get('/orders', async (req, res) => {
     }
 });
 
+// CRUD endpoints for Drinks
+app.post('/drinks', async (req, res) => {
+    try {
+        const drink = new Drink(req.body);
+        const savedDrink = await drink.save();
+        res.status(201).json(savedDrink);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/drinks/:id', async (req, res) => {
+    try {
+        const updatedDrink = await Drink.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!updatedDrink) {
+            return res.status(404).json({ message: 'Drink not found' });
+        }
+        res.json(updatedDrink);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.delete('/drinks/:id', async (req, res) => {
+    try {
+        const deletedDrink = await Drink.findByIdAndDelete(req.params.id);
+        if (!deletedDrink) {
+            return res.status(404).json({ message: 'Drink not found' });
+        }
+        res.json({ message: 'Drink deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// CRUD endpoints for Main Dishes
+app.post('/main-dishes', async (req, res) => {
+    try {
+        const mainDish = new MainDish(req.body);
+        const savedMainDish = await mainDish.save();
+        res.status(201).json(savedMainDish);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/main-dishes/:id', async (req, res) => {
+    try {
+        const updatedMainDish = await MainDish.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!updatedMainDish) {
+            return res.status(404).json({ message: 'Main dish not found' });
+        }
+        res.json(updatedMainDish);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.delete('/main-dishes/:id', async (req, res) => {
+    try {
+        const deletedMainDish = await MainDish.findByIdAndDelete(req.params.id);
+        if (!deletedMainDish) {
+            return res.status(404).json({ message: 'Main dish not found' });
+        }
+        res.json({ message: 'Main dish deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// CRUD endpoints for Side Dishes
+app.post('/side-dishes', async (req, res) => {
+    try {
+        const sideDish = new SideDish(req.body);
+        const savedSideDish = await sideDish.save();
+        res.status(201).json(savedSideDish);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/side-dishes/:id', async (req, res) => {
+    try {
+        const updatedSideDish = await SideDish.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!updatedSideDish) {
+            return res.status(404).json({ message: 'Side dish not found' });
+        }
+        res.json(updatedSideDish);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.delete('/side-dishes/:id', async (req, res) => {
+    try {
+        const deletedSideDish = await SideDish.findByIdAndDelete(req.params.id);
+        if (!deletedSideDish) {
+            return res.status(404).json({ message: 'Side dish not found' });
+        }
+        res.json({ message: 'Side dish deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 app.patch('/order/:id', async (req, res) => {
   try {
     const { id } = req.params;

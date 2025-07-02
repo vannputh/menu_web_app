@@ -1,6 +1,114 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* PrimeIcons for icons */
+@import url('https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css');
+
+/* Material Icons for backward compatibility */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f8fafc;
+  color: #334155;
+  line-height: 1.6;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Basic PrimeNG styles with Tailwind */
+.p-button {
+  @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg transition-colors;
+  @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500;
+}
+
+.p-button-secondary {
+  @apply bg-gray-500 text-white hover:bg-gray-600;
+}
+
+.p-button-success {
+  @apply bg-green-600 text-white hover:bg-green-700;
+}
+
+.p-inputtext, .p-dropdown, .p-inputnumber-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+}
+
+.p-dialog {
+  @apply bg-white rounded-lg shadow-xl;
+}
+
+.p-dialog-header {
+  @apply px-6 py-4 border-b border-gray-200;
+}
+
+.p-dialog-content {
+  @apply px-6 py-4;
+}
+
+.p-dialog-footer {
+  @apply px-6 py-4 border-t border-gray-200;
+}
+
+/* PrimeNG Card enhancements */
+.p-card {
+  @apply transition-all duration-300;
+}
+
+.p-card-header {
+  @apply rounded-t-lg overflow-hidden;
+}
+
+.p-card-footer {
+  @apply rounded-b-lg;
+}
+
+/* PrimeNG InputNumber styling */
+.p-inputnumber {
+  @apply w-full;
+}
+
+.p-inputnumber-buttons-horizontal .p-inputnumber-button {
+  @apply bg-blue-100 hover:bg-blue-200 border-blue-300;
+}
+
+/* PrimeNG Dropdown styling */
+.p-dropdown-panel {
+  @apply shadow-lg border border-gray-200 rounded-lg;
+}
+
+.p-dropdown-item {
+  @apply hover:bg-blue-50 transition-colors;
+}
+
+/* Removed duplicate Tailwind imports */
 
 
 
