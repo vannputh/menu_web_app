@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:host ::ng-deep {
+  .admin-footer-btn {
+    .p-button {
+      font-family: 'Poppins', sans-serif;
+      border-color: #fbbf24;
+      color: #fbbf24;
+      
+      &:hover {
+        background-color: #fbbf24;
+        border-color: #fbbf24;
+        color: #92400e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+      }
+    }
+    
+    &.admin-active .p-button {
+      background-color: #fbbf24 !important;
+      border-color: #fbbf24 !important;
+      color: #92400e !important;
+      box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+    }
+  }
+} 

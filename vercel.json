@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/menu"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "MONGO_URI": "@mongo_uri",
+    "EMAIL_USER": "@email_user", 
+    "EMAIL_APP_PASSWORD": "@email_app_password",
+    "ADMIN_PASSWORD": "@admin_password",
+    "NODE_ENV": "production"
+  }
+} 

@@ -80,7 +80,7 @@ const SideDish = mongoose.model('SideDish', sideDishSchema);
 const Order = mongoose.model('Order', orderSchema);
 
 // Routes
-app.get('/drinks', async (req, res) => {
+app.get('/api/drinks', async (req, res) => {
   try {
     const drinks = await Drink.find();
     res.json(drinks);
@@ -89,7 +89,7 @@ app.get('/drinks', async (req, res) => {
   }
 });
 
-app.get('/main-dishes', async (req, res) => {
+app.get('/api/main-dishes', async (req, res) => {
   try {
     const mainDishes = await MainDish.find();
     res.json(mainDishes);
@@ -98,7 +98,7 @@ app.get('/main-dishes', async (req, res) => {
   }
 });
 
-app.get('/side-dishes', async (req, res) => {
+app.get('/api/side-dishes', async (req, res) => {
   try {
     const sideDishes = await SideDish.find();
     res.json(sideDishes);
@@ -107,7 +107,7 @@ app.get('/side-dishes', async (req, res) => {
   }
 });
 
-app.get('/orders', async (req, res) => {
+app.get('/api/orders', async (req, res) => {
     try {
         const orders = await Order.find();
         res.json(orders);
@@ -117,7 +117,7 @@ app.get('/orders', async (req, res) => {
 });
 
 // CRUD endpoints for Drinks
-app.post('/drinks', async (req, res) => {
+app.post('/api/drinks', async (req, res) => {
     try {
         const drink = new Drink(req.body);
         const savedDrink = await drink.save();
@@ -127,7 +127,7 @@ app.post('/drinks', async (req, res) => {
     }
 });
 
-app.put('/drinks/:id', async (req, res) => {
+app.put('/api/drinks/:id', async (req, res) => {
     try {
         const updatedDrink = await Drink.findByIdAndUpdate(
             req.params.id,
@@ -143,7 +143,7 @@ app.put('/drinks/:id', async (req, res) => {
     }
 });
 
-app.delete('/drinks/:id', async (req, res) => {
+app.delete('/api/drinks/:id', async (req, res) => {
     try {
         const deletedDrink = await Drink.findByIdAndDelete(req.params.id);
         if (!deletedDrink) {
@@ -156,7 +156,7 @@ app.delete('/drinks/:id', async (req, res) => {
 });
 
 // CRUD endpoints for Main Dishes
-app.post('/main-dishes', async (req, res) => {
+app.post('/api/main-dishes', async (req, res) => {
     try {
         const mainDish = new MainDish(req.body);
         const savedMainDish = await mainDish.save();
@@ -166,7 +166,7 @@ app.post('/main-dishes', async (req, res) => {
     }
 });
 
-app.put('/main-dishes/:id', async (req, res) => {
+app.put('/api/main-dishes/:id', async (req, res) => {
     try {
         const updatedMainDish = await MainDish.findByIdAndUpdate(
             req.params.id,
@@ -182,7 +182,7 @@ app.put('/main-dishes/:id', async (req, res) => {
     }
 });
 
-app.delete('/main-dishes/:id', async (req, res) => {
+app.delete('/api/main-dishes/:id', async (req, res) => {
     try {
         const deletedMainDish = await MainDish.findByIdAndDelete(req.params.id);
         if (!deletedMainDish) {
@@ -195,7 +195,7 @@ app.delete('/main-dishes/:id', async (req, res) => {
 });
 
 // CRUD endpoints for Side Dishes
-app.post('/side-dishes', async (req, res) => {
+app.post('/api/side-dishes', async (req, res) => {
     try {
         const sideDish = new SideDish(req.body);
         const savedSideDish = await sideDish.save();
@@ -205,7 +205,7 @@ app.post('/side-dishes', async (req, res) => {
     }
 });
 
-app.put('/side-dishes/:id', async (req, res) => {
+app.put('/api/side-dishes/:id', async (req, res) => {
     try {
         const updatedSideDish = await SideDish.findByIdAndUpdate(
             req.params.id,
@@ -221,7 +221,7 @@ app.put('/side-dishes/:id', async (req, res) => {
     }
 });
 
-app.delete('/side-dishes/:id', async (req, res) => {
+app.delete('/api/side-dishes/:id', async (req, res) => {
     try {
         const deletedSideDish = await SideDish.findByIdAndDelete(req.params.id);
         if (!deletedSideDish) {
@@ -268,7 +268,7 @@ const upload = multer({
 });
 
 // Nodemailer transporter
-app.post('/send-order-email', upload.single('pdf'), async (req, res) => {
+app.post('/api/send-order-email', upload.single('pdf'), async (req, res) => {
   try {
     const { customerEmail, orderId, customerName } = req.body;
 
@@ -354,7 +354,7 @@ app.post('/send-order-email', upload.single('pdf'), async (req, res) => {
 });
 
 // Debug endpoint to check environment setup (remove in production)
-app.get('/admin/debug', (req, res) => {
+app.get('/api/admin/debug', (req, res) => {
   res.json({
     mongoUriSet: !!process.env.MONGO_URI,
     emailUserSet: !!process.env.EMAIL_USER,
@@ -367,7 +367,7 @@ app.get('/admin/debug', (req, res) => {
 });
 
 // Admin authentication endpoint
-app.post('/admin/login', async (req, res) => {
+app.post('/api/admin/login', async (req, res) => {
   try {
     const { password } = req.body;
 
@@ -404,7 +404,7 @@ app.post('/admin/login', async (req, res) => {
   }
 });
 
-app.post('/orders', async (req, res) => {
+app.post('/api/orders', async (req, res) => {
   try {
     const { customerEmail, customerName, items, total, paymentMethod } = req.body;
 

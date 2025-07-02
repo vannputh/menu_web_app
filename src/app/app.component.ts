@@ -1,6 +1,7 @@
 import { Component, Renderer2 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from "./navbar/navbar.component";
+import { FooterComponent } from "./shared/components/footer/footer.component";
 import { Router, NavigationEnd } from '@angular/router';
 import { NgIf, AsyncPipe } from "@angular/common";
 import { CartDialogComponent } from './shared/components/cart-dialog/cart-dialog.component';
@@ -10,7 +11,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, NgIf, AsyncPipe, CartDialogComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, NgIf, AsyncPipe, CartDialogComponent],
   templateUrl: './app.component.html'
 })
 export class AppComponent {
@@ -36,13 +37,8 @@ export class AppComponent {
     this.dialogData$ = this.cartDialogService.dialogData$;
   }
 
-  toggleDarkMode() {
-    this.isDarkMode = !this.isDarkMode;
-    if (this.isDarkMode) {
-      this.renderer.addClass(document.documentElement, 'dark');
-    } else {
-      this.renderer.removeClass(document.documentElement, 'dark');
-    }
+  onDarkModeToggle(isDark: boolean) {
+    this.isDarkMode = isDark;
   }
 
   onDialogClose() {

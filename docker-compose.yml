@@ -5,11 +5,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - EMAIL_USER=kaixinmalatang@gmail.com
-      - EMAIL_APP_PASSWORD=kiykxylvqokofpkz
-      - MONGO_URI=mongodb://mongo:27017/restaurant
-    depends_on:
-      - mongo
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_APP_PASSWORD=${EMAIL_APP_PASSWORD}
+      - MONGO_URI=${MONGO_URI}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - NODE_ENV=${NODE_ENV:-production}
 
   frontend:
     build: .
@@ -17,13 +17,3 @@ services:
       - "80:80"
     depends_on:
       - backend
-
-  mongo:
-    image: mongo
-    ports:
-      - "27018:27017"
-    volumes:
-      - mongo-data:/data/db
-
-volumes:
-  mongo-data:

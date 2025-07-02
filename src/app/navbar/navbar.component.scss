@@ -1,6 +1,88 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-body {
-  font-family: 'Poppins', sans-serif;
+// Custom styles for PrimeNG components
+:host ::ng-deep {
+  .p-toolbar {
+    border-radius: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .p-button {
+    font-family: 'Poppins', sans-serif;
+    border-radius: 0.75rem;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  .p-badge {
+    min-width: 1.25rem;
+    height: 1.25rem;
+    line-height: 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    animation: pulse 2s infinite;
+  }
+  
+  // Custom navbar link active state (applies to all navigation links including cart)
+  .navbar-active {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1)) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+}
 
+// Navbar link hover effects (applies to all navigation links including cart)
+.navbar-link {
+  position: relative;
+  overflow: hidden;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: white;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+  
+  &:hover:before {
+    width: 80%;
+  }
+}
+
+// Smooth animations for cart badge
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0,0,0);
+  }
+  40%, 43% {
+    transform: translate3d(0,-8px,0);
+  }
+  70% {
+    transform: translate3d(0,-4px,0);
+  }
+  90% {
+    transform: translate3d(0,-2px,0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }

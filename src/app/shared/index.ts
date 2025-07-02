@@ -13,4 +13,5 @@ export * from './services/auth.service';
 export * from './components/menu-category/menu-category.component';
 export * from './components/cart-dialog/cart-dialog.component';
 export * from './components/cart-item/cart-item.component';
-export * from './components/receipt-dialog/receipt-dialog.component'; 
+export * from './components/receipt-dialog/receipt-dialog.component';
+export * from './components/footer/footer.component'; 
